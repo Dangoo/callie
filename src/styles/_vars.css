@@ -1,0 +1,7 @@
+:root{
+  --root-font-size: 16px;
+  --root-font-size-calc: 16;
+  --cell-height: calc(40 / var(--root-font-size-calc) * 1em);
+
+  --border-color: #ccc;
+}

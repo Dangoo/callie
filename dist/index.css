@@ -1,0 +1,151 @@
+input::-webkit-inner-spin-button,
+input::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+}
+
+input::-webkit-calendar-picker-indicator{
+    display: none;
+}
+
+@-webkit-keyframes delayVisbility {
+  99% {
+    visibility: visible;
+  } to {
+    visibility: hidden;
+  }
+}
+
+@keyframes delayVisbility {
+  99% {
+    visibility: visible;
+  } to {
+    visibility: hidden;
+  }
+}
+
+.date-input .container {
+  position: absolute;
+  padding: 16px;
+  padding: 1rem;
+  border: 1px solid #ccc;
+}
+
+.date-input .container > ul {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  width: 17.5em;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  overflow: hidden;
+}
+
+.date-input .container > ul > li {
+  position: relative;
+  width: 100%;
+  -ms-flex-negative: 0;
+      flex-shrink: 0;
+  -webkit-box-flex: 0;
+      -ms-flex-positive: 0;
+          flex-grow: 0;
+
+  z-index: 0;
+  opacity: 0;
+  -webkit-transition: opacity .3s ease-out;
+  transition: opacity .3s ease-out;
+  -webkit-animation: delayVisbility 0.1s .3s linear both;
+          animation: delayVisbility 0.1s .3s linear both;
+}
+
+.date-input .container > ul > li:not(:first-child){
+  margin-left: -100%;
+}
+
+.date-input .date-input__view--days table {
+  border-collapse: collapse;
+}
+
+.date-input .date-input__view--days th,
+.date-input .date-input__view--days td {
+  width: 2.5em;
+  height: 2.5em;
+  padding: 0;
+  text-align: center;
+  border: 1px solid #ccc;
+}
+
+.date-input .date-input__view--months ol,
+.date-input .date-input__view--years ol {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  border: solid #ccc;
+  border-width: 1px 1px 0 0;
+}
+
+.date-input .date-input__view--months ol {
+  -webkit-column-count: 2;
+     -moz-column-count: 2;
+          column-count: 2;
+  -webkit-column-gap: 0;
+     -moz-column-gap: 0;
+          column-gap: 0;
+}
+
+.date-input .date-input__view--months ol > li,
+.date-input .date-input__view--years ol > li {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  height: 2.5em;
+  padding: 0 1em;
+  border: solid #ccc;
+  border-width: 0 0 1px 1px;
+}
+
+.date-input .date-input__view--years ol {
+  position: absolute;
+  overflow-y: auto;
+  max-height: 100%;
+  width: 100%;
+}
+
+.date-input .date-input__view--days .current {
+  font-weight: bold;
+}
+
+.date-input .date-input__view--days .selected,
+.date-input .date-input__view--months .selected,
+.date-input .date-input__view--years .selected {
+  font-weight: bold;
+  box-shadow: inset 0 0 0 3px red;
+}
+
+.date-input .container input:first-of-type:checked ~ ul > li:first-of-type,
+.date-input .container input:nth-of-type(2):checked ~ ul > li:nth-of-type(2),
+.date-input .container input:last-of-type:checked ~ ul > li:last-of-type {
+  z-index: 1;
+  visibility: visible;
+  opacity: 1;
+
+  -webkit-transition-timing-function: ease-in;
+
+          transition-timing-function: ease-in;
+  -webkit-animation: none;
+          animation: none;
+}
+
+html {
+  box-sizing: border-box;
+}
+
+body,
+body::before,
+body::after,
+body * {
+  box-sizing: inherit;
+}

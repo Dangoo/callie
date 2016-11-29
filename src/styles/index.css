@@ -1,0 +1,14 @@
+
+@import 'navigator';
+@import 'picker';
+
+html {
+  box-sizing: border-box;
+}
+
+body,
+body::before,
+body::after,
+body * {
+  box-sizing: inherit;
+}

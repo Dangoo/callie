@@ -1,0 +1,108 @@
+@import '_vars';
+
+@keyframes delayVisbility {
+  99% {
+    visibility: visible;
+  } to {
+    visibility: hidden;
+  }
+}
+
+.date-input .container {
+  position: absolute;
+  padding: 1rem;
+  border: 1px solid var(--border-color);
+}
+
+.date-input .container > ul {
+  display: flex;
+  width: calc(var(--cell-height) * 7);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  overflow: hidden;
+}
+
+.date-input .container > ul > li {
+  position: relative;
+  width: 100%;
+  flex-shrink: 0;
+  flex-grow: 0;
+
+  z-index: 0;
+  opacity: 0;
+  transition: opacity .3s ease-out;
+  animation: delayVisbility 0.1s .3s linear both;
+}
+
+.date-input .container > ul > li:not(:first-child){
+  margin-left: -100%;
+}
+
+.date-input .date-input__view--days table {
+  border-collapse: collapse;
+}
+
+.date-input .date-input__view--days th,
+.date-input .date-input__view--days td {
+  width: var(--cell-height);
+  height: var(--cell-height);
+  padding: 0;
+  text-align: center;
+  border: 1px solid var(--border-color);
+}
+
+
+.date-input .date-input__view--months ol,
+.date-input .date-input__view--years ol {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  border: solid var(--border-color);
+  border-width: 1px 1px 0 0;
+}
+
+.date-input .date-input__view--months ol {
+  column-count: 2;
+  column-gap: 0;
+}
+
+.date-input .date-input__view--months ol > li,
+.date-input .date-input__view--years ol > li {
+  display: flex;
+  align-items: center;
+  height: var(--cell-height);
+  padding: 0 1em;
+  border: solid var(--border-color);
+  border-width: 0 0 1px 1px;
+}
+
+.date-input .date-input__view--years ol {
+  position: absolute;
+  overflow-y: auto;
+  max-height: 100%;
+  width: 100%;
+}
+
+.date-input .date-input__view--days .current {
+  font-weight: bold;
+}
+
+.date-input .date-input__view--days .selected,
+.date-input .date-input__view--months .selected,
+.date-input .date-input__view--years .selected {
+  font-weight: bold;
+  box-shadow: inset 0 0 0 3px red;
+}
+
+
+.date-input .container input:first-of-type:checked ~ ul > li:first-of-type,
+.date-input .container input:nth-of-type(2):checked ~ ul > li:nth-of-type(2),
+.date-input .container input:last-of-type:checked ~ ul > li:last-of-type {
+  z-index: 1;
+  visibility: visible;
+  opacity: 1;
+
+  transition-timing-function: ease-in;
+  animation: none;
+}
