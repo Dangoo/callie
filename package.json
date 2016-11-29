@@ -1,0 +1,21 @@
+{
+  "name": "datepicker",
+  "version": "1.0.0",
+  "description": "",
+  "main": "dist/index.js",
+  "scripts": {
+    "build": "gulp",
+    "watch": "gulp watch"
+  },
+  "author": "Daniel Gooß",
+  "license": "MIT",
+  "devDependencies": {
+    "babel-preset-es2015": "^6.18.0",
+    "gulp": "^3.9.1",
+    "gulp-babel": "^6.1.2",
+    "gulp-paeckchen": "^0.1.1",
+    "gulp-postcss": "^6.2.0",
+    "postcss-cssnext": "^2.9.0",
+    "postcss-import": "^8.2.0"
+  }
+}
