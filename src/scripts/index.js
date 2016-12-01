@@ -54,10 +54,11 @@ export default function datepicker(element, options) {
   function updatePicker(date) {
     const datesInMonth = getDatesInMonth(date, selectedDate.day);
     const month = fillMonth(datesInMonth, opts.weeksPerMonth, opts.daysPerWeek);
-    let daysTable;
+    let weeksOfMonth = [];
+    let dateNamesAST = null;
 
     if (opts.useWeeks) {
-      const weeksOfMonth = splitMonthInWeeks(
+      weeksOfMonth = splitMonthInWeeks(
         [].concat(
           month.daysInPreviousMonth,
           month.daysInMonth,
@@ -66,25 +67,21 @@ export default function datepicker(element, options) {
         opts.weeksPerMonth,
         opts.daysPerWeek
       );
-      const dateNamesAST = dateNames.days.map((item) => convertToAST(item));
-
-      daysTable = buildTable(dateNamesAST, weeksOfMonth);
+      dateNamesAST = dateNames.days.map((item) => convertToAST(item));
     } else {
-      const weeksOfMonth = splitMonthInWeeks(
+      weeksOfMonth = splitMonthInWeeks(
         month.daysInMonth,
         opts.weeksPerMonth,
         opts.daysPerWeek
       );
-
-      daysTable = buildTable(null, weeksOfMonth);
     }
 
+    const daysTable = buildTable(dateNamesAST, weeksOfMonth);
     const monthsAST = assignState(
       getMonthsInYear(dateNames.months, selectedDate.month),
       'month'
     );
     const monthsList = buildList('ol', monthsAST, 'month');
-
     const yearsAST = assignState(
       getYearsTo(opts.maxDate, 100, selectedDate.year),
       'year'

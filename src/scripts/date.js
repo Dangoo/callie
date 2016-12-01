@@ -21,6 +21,7 @@ function compareDates(date1, date2) {
 export function getDaysPerMonth(date) {
   const tempDate = new Date(date);
   // Increment month by 1 to switch to next month
+  tempDate.setDate(1);
   tempDate.setMonth(tempDate.getMonth() + 1);
   // Set date to 0 to get last day of previous month
   tempDate.setDate(0);
@@ -40,7 +41,6 @@ export function getDatesInMonth(date, selectedDay) {
   let tempDate = new Date(date);
   const daysPerMonth = getDaysPerMonth(date);
   const datesInMonth = [];
-
 
   for (let i = daysPerMonth; i > 0; i--) {
     const actualDate = new Date(tempDate.setDate(i));
