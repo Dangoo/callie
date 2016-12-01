@@ -18,13 +18,21 @@
       max="2018-12-31"
     />
     <div class="container" data-role="container">
-      <label for="trigger_days">Tag</label>
-      <input type="radio" name="date" id="trigger_days">
-      <label for="trigger_months">Monat</label>
-      <input type="radio" name="date" id="trigger_months">
-      <label for="trigger_years">Jahr</label>
-      <input type="radio" name="date" id="trigger_years">
-      <ul>
+      <input type="radio" name="date" data-role="state" id="trigger_days" checked>
+      <input type="radio" name="date" data-role="state" id="trigger_months">
+      <input type="radio" name="date" data-role="state" id="trigger_years">
+      <ul class="date-input__nav">
+        <li>
+          <label for="trigger_days">Tag</label>
+        </li>
+        <li>
+          <label for="trigger_months">Monat</label>
+        </li>
+        <li>
+          <label for="trigger_years">Jahr</label>
+        </li>
+      </ul>
+      <ul class="date-input__view-list">
         <li class="date-input__view--days" data-role="days"></li>
         <li class="date-input__view--months" data-role="months"></li>
         <li class="date-input__view--years" data-role="years"></li>

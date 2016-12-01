@@ -42,17 +42,17 @@ var modules = [
             function updatePicker(date) {
                 var datesInMonth = (0, _date.getDatesInMonth)(date, selectedDate.day);
                 var month = (0, _transform.fillMonth)(datesInMonth, opts.weeksPerMonth, opts.daysPerWeek);
-                var daysTable = void 0;
+                var weeksOfMonth = [];
+                var dateNamesAST = null;
                 if (opts.useWeeks) {
-                    var weeksOfMonth = (0, _transform.splitMonthInWeeks)([].concat(month.daysInPreviousMonth, month.daysInMonth, month.daysInNextMonth), opts.weeksPerMonth, opts.daysPerWeek);
-                    var dateNamesAST = dateNames.days.map(function (item) {
+                    weeksOfMonth = (0, _transform.splitMonthInWeeks)([].concat(month.daysInPreviousMonth, month.daysInMonth, month.daysInNextMonth), opts.weeksPerMonth, opts.daysPerWeek);
+                    dateNamesAST = dateNames.days.map(function (item) {
                         return (0, _transform.convertToAST)(item);
                     });
-                    daysTable = (0, _dom.buildTable)(dateNamesAST, weeksOfMonth);
                 } else {
-                    var _weeksOfMonth = (0, _transform.splitMonthInWeeks)(month.daysInMonth, opts.weeksPerMonth, opts.daysPerWeek);
-                    daysTable = (0, _dom.buildTable)(null, _weeksOfMonth);
+                    weeksOfMonth = (0, _transform.splitMonthInWeeks)(month.daysInMonth, opts.weeksPerMonth, opts.daysPerWeek);
                 }
+                var daysTable = (0, _dom.buildTable)(dateNamesAST, weeksOfMonth);
                 var monthsAST = (0, _transform.assignState)((0, _date.getMonthsInYear)(dateNames.months, selectedDate.month), 'month');
                 var monthsList = (0, _dom.buildList)('ol', monthsAST, 'month');
                 var yearsAST = (0, _transform.assignState)((0, _date.getYearsTo)(opts.maxDate, 100, selectedDate.year), 'year');
@@ -124,8 +124,10 @@ var modules = [
         }
         function getDaysPerMonth(date) {
             var tempDate = new Date(date);
+            tempDate.setDate(1);
             tempDate.setMonth(tempDate.getMonth() + 1);
             tempDate.setDate(0);
+            console.log(tempDate);
             return tempDate.getDate();
         }
         function getDatesInMonth(date, selectedDay) {
@@ -189,16 +191,7 @@ var modules = [
         exports.assignState = assignState;
         exports.convertToAST = convertToAST;
         exports.splitMonthInWeeks = splitMonthInWeeks;
-        function _toConsumableArray(arr) {
-            if (Array.isArray(arr)) {
-                for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) {
-                    arr2[i] = arr[i];
-                }
-                return arr2;
-            } else {
-                return Array.from(arr);
-            }
-        }
+        var _array = __paeckchen_require__(5).exports;
         function formatValue(valueString, format) {
             var parts = valueString.split('.');
             if (format === 'dd.mm.yyyy') {
@@ -206,35 +199,21 @@ var modules = [
             }
             return parts.join('-');
         }
-        function getSchiftedArray(length, shiftBy) {
-            var items = [].concat(_toConsumableArray(Array(length).keys()));
-            return items.splice(-shiftBy).concat(items);
-        }
-        var daysInWeekIndices = getSchiftedArray(7, 1);
-        function shiftDayIndex(dayIndex) {
-            var days = daysInWeekIndices;
-            return days[dayIndex];
-        }
-        function getDummyArray(n) {
-            var value = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : null;
-            var a = [];
-            for (var i = n; i > 0; i--) {
-                a.push(value);
-            }
-            return a;
+        function shiftDayIndex(dayIndex, shiftRule) {
+            return shiftRule[dayIndex];
         }
         function fillMonth(daysInMonth, weeksPerMonth, daysPerWeek) {
             var maxDaysInMonth = daysPerWeek * weeksPerMonth;
-            var firstDayIndex = shiftDayIndex(daysInMonth[0].day);
-            var daysInPreviousMonth = [];
-            var daysInNextMonth = [];
+            var firstDayIndex = shiftDayIndex(daysInMonth[0].day, (0, _array.getShiftedArray)(7, 1));
             var deltaToPrevMonth = firstDayIndex;
             var deltaToNextMonth = (maxDaysInMonth - (daysInMonth.length + firstDayIndex)) % daysPerWeek;
+            var daysInPreviousMonth = [];
+            var daysInNextMonth = [];
             if (deltaToPrevMonth > 0) {
-                daysInPreviousMonth = getDummyArray(firstDayIndex, null);
-            }
-            if (deltaToNextMonth > 0 && deltaToNextMonth <= weeksPerMonth) {
-                daysInNextMonth = getDummyArray(deltaToNextMonth, null);
+                daysInPreviousMonth = (0, _array.getDummyArray)(firstDayIndex, null);
+                if (deltaToNextMonth <= weeksPerMonth) {
+                    daysInNextMonth = (0, _array.getDummyArray)(deltaToNextMonth, null);
+                }
             }
             return {
                 daysInPreviousMonth: daysInPreviousMonth,
@@ -260,7 +239,7 @@ var modules = [
         function splitMonthInWeeks(days, weeksPerMonth, daysPerWeek) {
             var weeks = [];
             for (var i = weeksPerMonth - 1; i >= 0; i--) {
-                var daysInWeek = days.slice(daysPerWeek * i, daysPerWeek * i + daysPerWeek);
+                var daysInWeek = days.slice(daysPerWeek * i, daysPerWeek * (i + 1));
                 var dateNames = assignState(daysInWeek, 'date');
                 weeks.unshift(dateNames);
             }
@@ -270,8 +249,8 @@ var modules = [
     function _4(module, exports) {
         'use strict';
         Object.defineProperty(exports, '__esModule', { value: true });
-        exports.buildTable = buildTable;
         exports.renderInNode = renderInNode;
+        exports.buildTable = buildTable;
         exports.buildList = buildList;
         function clearChildren(node) {
             while (node.hasChildNodes()) {
@@ -289,7 +268,11 @@ var modules = [
             }
             return node;
         }
-        function getTableRow(cells, cellNodeName) {
+        function renderInNode(target, node) {
+            clearChildren(target);
+            target.appendChild(node);
+        }
+        function buildTableRow(cells, cellNodeName) {
             var row = document.createElement('tr');
             var cell = document.createElement(cellNodeName);
             cells.forEach(function (value) {
@@ -302,7 +285,7 @@ var modules = [
             var tableNode = document.createElement('table');
             if (headData) {
                 var thead = document.createElement('thead');
-                thead.appendChild(getTableRow(headData, 'th'));
+                thead.appendChild(buildTableRow(headData, 'th'));
                 tableNode.appendChild(thead);
             }
             if (bodyData) {
@@ -310,7 +293,7 @@ var modules = [
                     var tbody = document.createElement('tbody');
                     if (bodyData.length) {
                         bodyData.forEach(function (data) {
-                            tbody.appendChild(getTableRow(data, 'td'));
+                            tbody.appendChild(buildTableRow(data, 'td'));
                         });
                     }
                     tableNode.appendChild(tbody);
@@ -318,14 +301,10 @@ var modules = [
             }
             if (footData) {
                 var tfoot = document.createElement('tfoot');
-                tfoot.appendChild(getTableRow(footData, 'td'));
+                tfoot.appendChild(buildTableRow(footData, 'td'));
                 tableNode.appendChild(tfoot);
             }
             return tableNode;
-        }
-        function renderInNode(target, node) {
-            clearChildren(target);
-            target.appendChild(node);
         }
         function buildList(listNodeName, listItemData) {
             var listNode = document.createElement(listNodeName);
@@ -335,6 +314,34 @@ var modules = [
                 listNode.appendChild(value && Object.keys(value).length ? extendNode(listItemInstance, value) : listItemInstance);
             });
             return listNode;
+        }
+    },
+    function _5(module, exports) {
+        'use strict';
+        Object.defineProperty(exports, '__esModule', { value: true });
+        exports.getShiftedArray = getShiftedArray;
+        exports.getDummyArray = getDummyArray;
+        function _toConsumableArray(arr) {
+            if (Array.isArray(arr)) {
+                for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) {
+                    arr2[i] = arr[i];
+                }
+                return arr2;
+            } else {
+                return Array.from(arr);
+            }
+        }
+        function getShiftedArray(length, shiftBy) {
+            var items = [].concat(_toConsumableArray(Array(length).keys()));
+            return items.splice(-shiftBy).concat(items);
+        }
+        function getDummyArray(n) {
+            var value = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : null;
+            var a = [];
+            for (var i = n; i > 0; i--) {
+                a.push(value);
+            }
+            return a;
         }
     }
 ];

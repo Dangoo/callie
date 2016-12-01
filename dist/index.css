@@ -23,14 +23,82 @@ input::-webkit-calendar-picker-indicator{
   }
 }
 
+.date-input [data-role=state] {
+  position: absolute;
+  width: 0;
+  height: 0;
+  left: 0;
+  top: 0;
+  visibility: hidden;
+}
+
 .date-input .container {
   position: absolute;
   padding: 16px;
   padding: 1rem;
   border: 1px solid #ccc;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, .1);
 }
 
-.date-input .container > ul {
+.date-input .date-input__nav {
+  position: relative;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  height: 2.5em;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  font-weight: bold;
+  border-bottom: 1px solid #ccc;
+}
+
+.date-input .date-input__nav::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  bottom: -1px;
+  width: 33.33333%;
+  border-bottom: 3px solid #4090ff;
+
+  -webkit-transition: -webkit-transform .15s ease-out;
+
+  transition: -webkit-transform .15s ease-out;
+
+  transition: transform .15s ease-out;
+
+  transition: transform .15s ease-out, -webkit-transform .15s ease-out;
+}
+
+.date-input .date-input__nav > li {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-flex: 1;
+      -ms-flex-positive: 1;
+          flex-grow: 1;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+}
+
+.date-input .date-input__nav label {
+  display: inherit;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+  height: 100%;
+  width: 100%;
+  cursor: pointer;
+}
+
+.date-input .date-input__view-list {
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
@@ -41,7 +109,7 @@ input::-webkit-calendar-picker-indicator{
   overflow: hidden;
 }
 
-.date-input .container > ul > li {
+.date-input .date-input__view-list > li {
   position: relative;
   width: 100%;
   -ms-flex-negative: 0;
@@ -58,11 +126,12 @@ input::-webkit-calendar-picker-indicator{
           animation: delayVisbility 0.1s .3s linear both;
 }
 
-.date-input .container > ul > li:not(:first-child){
+.date-input .date-input__view-list > li:not(:first-child){
   margin-left: -100%;
 }
 
 .date-input .date-input__view--days table {
+  margin-bottom: 1px;
   border-collapse: collapse;
 }
 
@@ -75,13 +144,20 @@ input::-webkit-calendar-picker-indicator{
   border: 1px solid #ccc;
 }
 
+.date-input .date-input__view--days th {
+  vertical-align: bottom;
+  border-top-color: transparent;
+  border-right-color: transparent;
+  border-left-color: transparent;
+}
+
 .date-input .date-input__view--months ol,
 .date-input .date-input__view--years ol {
   margin: 0;
   padding: 0;
   list-style: none;
   border: solid #ccc;
-  border-width: 1px 1px 0 0;
+  border-width: 0 1px 0 0;
 }
 
 .date-input .date-input__view--months ol {
@@ -121,13 +197,35 @@ input::-webkit-calendar-picker-indicator{
 .date-input .date-input__view--days .selected,
 .date-input .date-input__view--months .selected,
 .date-input .date-input__view--years .selected {
+  position: relative;
   font-weight: bold;
-  box-shadow: inset 0 0 0 3px red;
 }
 
-.date-input .container input:first-of-type:checked ~ ul > li:first-of-type,
-.date-input .container input:nth-of-type(2):checked ~ ul > li:nth-of-type(2),
-.date-input .container input:last-of-type:checked ~ ul > li:last-of-type {
+.date-input .date-input__view--days .selected::before,
+.date-input .date-input__view--months .selected::before,
+.date-input .date-input__view--years .selected::before {
+  content: '';
+  display: block;
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  border: 0 solid #4090ff;
+}
+
+.date-input .date-input__view--days .selected::before {
+  right: 0;
+  border-width: 3px;
+}
+
+.date-input .date-input__view--months .selected::before,
+.date-input .date-input__view--years .selected::before {
+  border-left-width: 3px;
+}
+
+.date-input .container input:first-of-type:checked ~ .date-input__view-list > li:first-of-type,
+.date-input .container input:nth-of-type(2):checked ~ .date-input__view-list > li:nth-of-type(2),
+.date-input .container input:last-of-type:checked ~ .date-input__view-list > li:last-of-type {
   z-index: 1;
   visibility: visible;
   opacity: 1;
@@ -139,8 +237,19 @@ input::-webkit-calendar-picker-indicator{
           animation: none;
 }
 
+.date-input .container input:nth-of-type(2):checked ~ .date-input__nav::after {
+  -webkit-transform: translateX(100%);
+          transform: translateX(100%);
+}
+
+.date-input .container input:last-of-type:checked ~ .date-input__nav::after {
+  -webkit-transform: translateX(200%);
+          transform: translateX(200%);
+}
+
 html {
   box-sizing: border-box;
+  font-family: sans-serif;
 }
 
 body,
