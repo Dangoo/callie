@@ -3,5 +3,8 @@
   --root-font-size-calc: 16;
   --cell-height: calc(40 / var(--root-font-size-calc) * 1em);
 
+  --highlight-color: #4090ff;
   --border-color: #ccc;
+
+  --border-width: 3px;
 }
