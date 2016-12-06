@@ -127,7 +127,6 @@ var modules = [
             tempDate.setDate(1);
             tempDate.setMonth(tempDate.getMonth() + 1);
             tempDate.setDate(0);
-            console.log(tempDate);
             return tempDate.getDate();
         }
         function getDatesInMonth(date, selectedDay) {

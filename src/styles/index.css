@@ -1,5 +1,6 @@
 
 @import 'navigator';
+@import 'chrome';
 @import 'picker';
 
 html {

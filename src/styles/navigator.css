@@ -1,3 +1,7 @@
+/**
+ * Disable native datepicker on desktop
+ * NOTE: Does not disable on mobile devices!
+ */
 input::-webkit-inner-spin-button,
 input::-webkit-outer-spin-button {
   -webkit-appearance: none;

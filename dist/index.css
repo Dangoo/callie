@@ -1,28 +1,14 @@
+/**
+ * Disable native datepicker on desktop
+ * NOTE: Does not disable on mobile devices!
+ */
 input::-webkit-inner-spin-button,
 input::-webkit-outer-spin-button {
   -webkit-appearance: none;
 }
-
 input::-webkit-calendar-picker-indicator{
     display: none;
 }
-
-@-webkit-keyframes delayVisbility {
-  99% {
-    visibility: visible;
-  } to {
-    visibility: hidden;
-  }
-}
-
-@keyframes delayVisbility {
-  99% {
-    visibility: visible;
-  } to {
-    visibility: hidden;
-  }
-}
-
 .date-input [data-role=state] {
   position: absolute;
   width: 0;
@@ -31,16 +17,14 @@ input::-webkit-calendar-picker-indicator{
   top: 0;
   visibility: hidden;
 }
-
-.date-input .container {
+.date-input__container {
   position: absolute;
   padding: 16px;
   padding: 1rem;
   border: 1px solid #ccc;
   box-shadow: 0 2px 5px rgba(0, 0, 0, .1);
 }
-
-.date-input .date-input__nav {
+.date-input__nav {
   position: relative;
   display: -webkit-box;
   display: -ms-flexbox;
@@ -52,8 +36,7 @@ input::-webkit-calendar-picker-indicator{
   font-weight: bold;
   border-bottom: 1px solid #ccc;
 }
-
-.date-input .date-input__nav::after {
+.date-input__nav::after {
   content: '';
   position: absolute;
   left: 0;
@@ -69,8 +52,7 @@ input::-webkit-calendar-picker-indicator{
 
   transition: transform .15s ease-out, -webkit-transform .15s ease-out;
 }
-
-.date-input .date-input__nav > li {
+.date-input__nav > li {
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
@@ -84,8 +66,7 @@ input::-webkit-calendar-picker-indicator{
       -ms-flex-pack: center;
           justify-content: center;
 }
-
-.date-input .date-input__nav label {
+.date-input__nav label {
   display: inherit;
   -webkit-box-align: center;
       -ms-flex-align: center;
@@ -97,8 +78,10 @@ input::-webkit-calendar-picker-indicator{
   width: 100%;
   cursor: pointer;
 }
-
-.date-input .date-input__view-list {
+.date-input__views {
+  overflow: hidden;
+}
+.date-input__view-list {
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
@@ -106,10 +89,8 @@ input::-webkit-calendar-picker-indicator{
   margin: 0;
   padding: 0;
   list-style: none;
-  overflow: hidden;
 }
-
-.date-input .date-input__view-list > li {
+.date-input__view-list > li {
   position: relative;
   width: 100%;
   -ms-flex-negative: 0;
@@ -118,23 +99,90 @@ input::-webkit-calendar-picker-indicator{
       -ms-flex-positive: 0;
           flex-grow: 0;
 
+  -webkit-animation: delayVisbility 0.01s linear both;
+
+          animation: delayVisbility 0.01s linear both;
+}
+.date-input__container input:nth-of-type(2):checked ~ .date-input__nav::after {
+  -webkit-transform: translateX(100%);
+          transform: translateX(100%);
+}
+.date-input__container input:last-of-type:checked ~ .date-input__nav::after {
+  -webkit-transform: translateX(200%);
+          transform: translateX(200%);
+}
+.date-input__container input:first-of-type:checked ~ .date-input__views .date-input__view-list > li:first-of-type,
+.date-input__container input:nth-of-type(2):checked ~ .date-input__views .date-input__view-list > li:nth-of-type(2),
+.date-input__container input:last-of-type:checked ~ .date-input__views .date-input__view-list > li:last-of-type {
+  z-index: 1;
+  visibility: visible;
+  -webkit-animation: none;
+          animation: none;
+}
+.date-input:not(.date-input--slide) .date-input__view-list > li:not(:first-child){
+  margin-left: -100%;
+}
+/**
+ * Styles
+ *
+ * @mod slide Views slide in and out like a slideshow
+ * @mod fade  Views fade over
+ */
+.date-input--slide .date-input__view-list {
+  -webkit-transition: -webkit-transform .15s ease-out;
+  transition: -webkit-transform .15s ease-out;
+  transition: transform .15s ease-out;
+  transition: transform .15s ease-out, -webkit-transform .15s ease-out;
+}
+.date-input--slide .date-input__view-list > li {
+  -webkit-animation: none 0s ease 0s 1 normal none running;
+          animation: none 0s ease 0s 1 normal none running;
+  -webkit-animation: initial;
+          animation: initial;
+}
+.date-input--slide .date-input__container input:nth-of-type(2):checked ~ .date-input__views .date-input__view-list {
+  -webkit-transform: translateX(-100%);
+          transform: translateX(-100%);
+}
+.date-input--slide .date-input__container input:last-of-type:checked ~ .date-input__views .date-input__view-list {
+  -webkit-transform: translateX(-200%);
+          transform: translateX(-200%);
+}
+@-webkit-keyframes delayVisbility {
+  99% {
+    visibility: visible;
+  } to {
+    visibility: hidden;
+  }
+}
+@keyframes delayVisbility {
+  99% {
+    visibility: visible;
+  } to {
+    visibility: hidden;
+  }
+}
+.date-input--fade .date-input__view-list > li {
   z-index: 0;
   opacity: 0;
   -webkit-transition: opacity .3s ease-out;
   transition: opacity .3s ease-out;
-  -webkit-animation: delayVisbility 0.1s .3s linear both;
-          animation: delayVisbility 0.1s .3s linear both;
+  -webkit-animation-delay: .3s;
+          animation-delay: .3s;
 }
+.date-input--fade .date-input__container input:first-of-type:checked ~ .date-input__views .date-input__view-list > li:first-of-type,
+.date-input--fade .date-input__container input:nth-of-type(2):checked ~ .date-input__views .date-input__view-list > li:nth-of-type(2),
+.date-input--fade .date-input__container input:last-of-type:checked ~ .date-input__views .date-input__view-list > li:last-of-type {
+  opacity: 1;
 
-.date-input .date-input__view-list > li:not(:first-child){
-  margin-left: -100%;
+  -webkit-transition-timing-function: ease-in;
+
+          transition-timing-function: ease-in;
 }
-
 .date-input .date-input__view--days table {
   margin-bottom: 1px;
   border-collapse: collapse;
 }
-
 .date-input .date-input__view--days th,
 .date-input .date-input__view--days td {
   width: 2.5em;
@@ -143,14 +191,12 @@ input::-webkit-calendar-picker-indicator{
   text-align: center;
   border: 1px solid #ccc;
 }
-
 .date-input .date-input__view--days th {
   vertical-align: bottom;
   border-top-color: transparent;
   border-right-color: transparent;
   border-left-color: transparent;
 }
-
 .date-input .date-input__view--months ol,
 .date-input .date-input__view--years ol {
   margin: 0;
@@ -159,7 +205,6 @@ input::-webkit-calendar-picker-indicator{
   border: solid #ccc;
   border-width: 0 1px 0 0;
 }
-
 .date-input .date-input__view--months ol {
   -webkit-column-count: 2;
      -moz-column-count: 2;
@@ -168,7 +213,6 @@ input::-webkit-calendar-picker-indicator{
      -moz-column-gap: 0;
           column-gap: 0;
 }
-
 .date-input .date-input__view--months ol > li,
 .date-input .date-input__view--years ol > li {
   display: -webkit-box;
@@ -182,25 +226,21 @@ input::-webkit-calendar-picker-indicator{
   border: solid #ccc;
   border-width: 0 0 1px 1px;
 }
-
 .date-input .date-input__view--years ol {
   position: absolute;
   overflow-y: auto;
   max-height: 100%;
   width: 100%;
 }
-
 .date-input .date-input__view--days .current {
   font-weight: bold;
 }
-
 .date-input .date-input__view--days .selected,
 .date-input .date-input__view--months .selected,
 .date-input .date-input__view--years .selected {
   position: relative;
   font-weight: bold;
 }
-
 .date-input .date-input__view--days .selected::before,
 .date-input .date-input__view--months .selected::before,
 .date-input .date-input__view--years .selected::before {
@@ -212,46 +252,18 @@ input::-webkit-calendar-picker-indicator{
   left: 0;
   border: 0 solid #4090ff;
 }
-
 .date-input .date-input__view--days .selected::before {
   right: 0;
   border-width: 3px;
 }
-
 .date-input .date-input__view--months .selected::before,
 .date-input .date-input__view--years .selected::before {
   border-left-width: 3px;
 }
-
-.date-input .container input:first-of-type:checked ~ .date-input__view-list > li:first-of-type,
-.date-input .container input:nth-of-type(2):checked ~ .date-input__view-list > li:nth-of-type(2),
-.date-input .container input:last-of-type:checked ~ .date-input__view-list > li:last-of-type {
-  z-index: 1;
-  visibility: visible;
-  opacity: 1;
-
-  -webkit-transition-timing-function: ease-in;
-
-          transition-timing-function: ease-in;
-  -webkit-animation: none;
-          animation: none;
-}
-
-.date-input .container input:nth-of-type(2):checked ~ .date-input__nav::after {
-  -webkit-transform: translateX(100%);
-          transform: translateX(100%);
-}
-
-.date-input .container input:last-of-type:checked ~ .date-input__nav::after {
-  -webkit-transform: translateX(200%);
-          transform: translateX(200%);
-}
-
 html {
   box-sizing: border-box;
   font-family: sans-serif;
 }
-
 body,
 body::before,
 body::after,

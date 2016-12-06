@@ -1,0 +1,142 @@
+@import '_vars';
+
+.date-input [data-role=state] {
+  position: absolute;
+  width: 0;
+  height: 0;
+  left: 0;
+  top: 0;
+  visibility: hidden;
+}
+
+.date-input__container {
+  position: absolute;
+  padding: 1rem;
+  border: 1px solid var(--border-color);
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+.date-input__nav {
+  position: relative;
+  display: flex;
+  height: var(--cell-height);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  font-weight: bold;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.date-input__nav::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  bottom: -1px;
+  width: calc(100%/3);
+  border-bottom: var(--border-width) solid var(--highlight-color);
+
+  transition: transform var(--slide-duration) ease-out;
+}
+
+.date-input__nav > li {
+  display: flex;
+  flex-grow: 1;
+  align-items: center;
+  justify-content: center;
+}
+
+.date-input__nav label {
+  display: inherit;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  width: 100%;
+  cursor: pointer;
+}
+
+.date-input__views {
+  overflow: hidden;
+}
+
+.date-input__view-list {
+  display: flex;
+  width: calc(var(--cell-height) * 7);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.date-input__view-list > li {
+  position: relative;
+  width: 100%;
+  flex-shrink: 0;
+  flex-grow: 0;
+
+  animation: delayVisbility 0.01s linear both;
+}
+
+.date-input__container input:nth-of-type(2):checked ~ .date-input__nav::after {
+  transform: translateX(100%);
+}
+
+.date-input__container input:last-of-type:checked ~ .date-input__nav::after {
+  transform: translateX(200%);
+}
+
+.date-input__container input:first-of-type:checked ~ .date-input__views .date-input__view-list > li:first-of-type,
+.date-input__container input:nth-of-type(2):checked ~ .date-input__views .date-input__view-list > li:nth-of-type(2),
+.date-input__container input:last-of-type:checked ~ .date-input__views .date-input__view-list > li:last-of-type {
+  z-index: 1;
+  visibility: visible;
+  animation: none;
+}
+
+.date-input:not(.date-input--slide) .date-input__view-list > li:not(:first-child){
+  margin-left: -100%;
+}
+
+/**
+ * Styles
+ *
+ * @mod slide Views slide in and out like a slideshow
+ * @mod fade  Views fade over
+ */
+.date-input--slide .date-input__view-list {
+  transition: transform var(--slide-duration) ease-out;
+}
+
+.date-input--slide .date-input__view-list > li {
+  animation: initial;
+}
+
+.date-input--slide .date-input__container input:nth-of-type(2):checked ~ .date-input__views .date-input__view-list {
+  transform: translateX(-100%);
+}
+
+.date-input--slide .date-input__container input:last-of-type:checked ~ .date-input__views .date-input__view-list {
+  transform: translateX(-200%);
+}
+
+@keyframes delayVisbility {
+  99% {
+    visibility: visible;
+  } to {
+    visibility: hidden;
+  }
+}
+
+.date-input--fade .date-input__view-list > li {
+  z-index: 0;
+  opacity: 0;
+  transition: opacity var(--fade-duration) ease-out;
+  animation-delay: var(--fade-duration);
+}
+
+.date-input--fade .date-input__container input:first-of-type:checked ~ .date-input__views .date-input__view-list > li:first-of-type,
+.date-input--fade .date-input__container input:nth-of-type(2):checked ~ .date-input__views .date-input__view-list > li:nth-of-type(2),
+.date-input--fade .date-input__container input:last-of-type:checked ~ .date-input__views .date-input__view-list > li:last-of-type {
+  opacity: 1;
+
+  transition-timing-function: ease-in;
+}
+

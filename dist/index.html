@@ -8,16 +8,9 @@
 </head>
 
 <body>
-  <div class="date-input">
-    <input
-      type="date"
-      data-role="input"
-      name=""
-      id=""
-      placeholder="tt.mm.jjjj"
-      max="2018-12-31"
-    />
-    <div class="container" data-role="container">
+  <div class="date-input date-input--slide">
+    <input type="date" data-role="input" name="" id="" placeholder="tt.mm.jjjj" max="2018-12-31" />
+    <div class="date-input__container" data-role="container">
       <input type="radio" name="date" data-role="state" id="trigger_days" checked>
       <input type="radio" name="date" data-role="state" id="trigger_months">
       <input type="radio" name="date" data-role="state" id="trigger_years">
@@ -32,11 +25,13 @@
           <label for="trigger_years">Jahr</label>
         </li>
       </ul>
-      <ul class="date-input__view-list">
-        <li class="date-input__view--days" data-role="days"></li>
-        <li class="date-input__view--months" data-role="months"></li>
-        <li class="date-input__view--years" data-role="years"></li>
-      </ul>
+      <div class="date-input__views">
+        <ul class="date-input__view-list">
+          <li class="date-input__view--days" data-role="days"></li>
+          <li class="date-input__view--months" data-role="months"></li>
+          <li class="date-input__view--years" data-role="years"></li>
+        </ul>
+      </div>
     </div>
   </div>
   <script src="index.js"></script>
