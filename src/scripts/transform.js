@@ -3,16 +3,6 @@ import {
   getDummyArray
 } from './helper/array';
 
-export function formatValue(valueString, format) {
-  const parts = valueString.split('.');
-
-  if (format === 'dd.mm.yyyy') {
-    parts.reverse();
-  }
-
-  return parts.join('-');
-}
-
 /**
  * Shift index of day according to daysInWeekIndices declaration
  *

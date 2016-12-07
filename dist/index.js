@@ -12,12 +12,11 @@ var modules = [
         Object.defineProperty(exports, '__esModule', { value: true });
         exports.default = datepicker;
         var _i18n = __paeckchen_require__(1).exports;
-        var _date = __paeckchen_require__(2).exports;
+        var _date = __paeckchen_require__(4).exports;
         var _transform = __paeckchen_require__(3).exports;
-        var _dom = __paeckchen_require__(4).exports;
+        var _dom = __paeckchen_require__(2).exports;
         function datepicker(element, options) {
-            var inputNode = element.querySelector('[data-role=input]');
-            var opts = Object.assign({
+            var defaultOpts = {
                 weeksPerMonth: 6,
                 daysPerWeek: 7,
                 useWeeks: true,
@@ -25,22 +24,25 @@ var modules = [
                 daysTargetSelector: '[data-role=days]',
                 monthsTargetSelector: '[data-role=months]',
                 yearsTargetSelector: '[data-role=years]',
-                maxDate: inputNode.max && new Date(inputNode.max),
-                minDate: inputNode.min && new Date(inputNode.min)
-            }, options);
-            console.log(opts);
-            var selectedDate = {
-                day: 12,
-                month: 5,
-                year: 2016
+                format: 'dd.mm.yyyy'
             };
+            var inputNode = element.querySelector('[data-role=input]');
+            var dateNow = new Date();
+            var localOpts = {
+                _value: inputNode.value,
+                _maxDate: inputNode.max ? new Date(inputNode.max) : dateNow,
+                _minDate: inputNode.min ? new Date(inputNode.min) : new Date(0),
+                _selectedDate: inputNode.value ? (0, _transform.parseDate)(inputNode.value) : undefined
+            };
+            var opts = Object.assign(defaultOpts, options, localOpts);
+            console.log(opts);
             var dateNames = (0, _i18n.getDateNames)();
             var containerNode = void 0;
             var daysViewNode = void 0;
             var monthsViewNode = void 0;
             var yearsViewNode = void 0;
             function updatePicker(date) {
-                var datesInMonth = (0, _date.getDatesInMonth)(date, selectedDate.day);
+                var datesInMonth = (0, _date.getDatesInMonth)(date, opts._selectedDate.getDate());
                 var month = (0, _transform.fillMonth)(datesInMonth, opts.weeksPerMonth, opts.daysPerWeek);
                 var weeksOfMonth = [];
                 var dateNamesAST = null;
@@ -53,33 +55,27 @@ var modules = [
                     weeksOfMonth = (0, _transform.splitMonthInWeeks)(month.daysInMonth, opts.weeksPerMonth, opts.daysPerWeek);
                 }
                 var daysTable = (0, _dom.buildTable)(dateNamesAST, weeksOfMonth);
-                var monthsAST = (0, _transform.assignState)((0, _date.getMonthsInYear)(dateNames.months, selectedDate.month), 'month');
+                var monthsAST = (0, _transform.assignState)((0, _date.getMonthsInYear)(dateNames.months, opts._selectedDate.getMonth()), 'month');
                 var monthsList = (0, _dom.buildList)('ol', monthsAST, 'month');
-                var yearsAST = (0, _transform.assignState)((0, _date.getYearsTo)(opts.maxDate, 100, selectedDate.year), 'year');
+                var yearsAST = (0, _transform.assignState)((0, _date.getYearsTo)(opts._maxDate, 100, opts._selectedDate.getFullYear()), 'year');
                 var yearsList = (0, _dom.buildList)('ol', yearsAST, 'years');
                 (0, _dom.renderInNode)(daysViewNode, daysTable);
                 (0, _dom.renderInNode)(monthsViewNode, monthsList);
                 (0, _dom.renderInNode)(yearsViewNode, yearsList);
             }
             function handleChange(e) {
-                var value = e.target.value;
-                var date = new Date((0, _transform.formatValue)(value, 'dd.mm.yyyy'));
-                if (date == 'Invalid Date') {
+                var date = (0, _transform.parseDate)(e.target.value, opts.format);
+                if (!date) {
                     return;
                 }
-                selectedDate = {
-                    day: date.getDate(),
-                    month: date.getMonth(),
-                    year: date.getFullYear()
-                };
+                opts._selectedDate = date;
                 updatePicker(date);
             }
             function init() {
                 element.addEventListener('change', handleChange);
-                element.value = new Date().toISOString().slice(0, 10);
                 containerNode = element.querySelector(opts.containerSelector);
                 daysViewNode = containerNode.querySelector(opts.daysTargetSelector);
-                monthsViewNode = element.querySelector(opts.monthsTargetSelector);
+                monthsViewNode = containerNode.querySelector(opts.monthsTargetSelector);
                 yearsViewNode = containerNode.querySelector(opts.yearsTargetSelector);
                 updatePicker(new Date());
             }
@@ -112,140 +108,6 @@ var modules = [
         }
     },
     function _2(module, exports) {
-        'use strict';
-        Object.defineProperty(exports, '__esModule', { value: true });
-        exports.getDaysPerMonth = getDaysPerMonth;
-        exports.getDatesInMonth = getDatesInMonth;
-        exports.getMonthsInYear = getMonthsInYear;
-        exports.getYearsFrom = getYearsFrom;
-        exports.getYearsTo = getYearsTo;
-        function compareDates(date1, date2) {
-            return date1.getFullYear() === date2.getFullYear() && date1.getMonth() === date2.getMonth() && date1.getDate() === date2.getDate();
-        }
-        function getDaysPerMonth(date) {
-            var tempDate = new Date(date);
-            tempDate.setDate(1);
-            tempDate.setMonth(tempDate.getMonth() + 1);
-            tempDate.setDate(0);
-            return tempDate.getDate();
-        }
-        function getDatesInMonth(date, selectedDay) {
-            var tempDate = new Date(date);
-            var daysPerMonth = getDaysPerMonth(date);
-            var datesInMonth = [];
-            for (var i = daysPerMonth; i > 0; i--) {
-                var actualDate = new Date(tempDate.setDate(i));
-                datesInMonth.unshift({
-                    fullDate: actualDate,
-                    date: tempDate.getDate(),
-                    day: tempDate.getDay(),
-                    current: compareDates(actualDate, new Date()),
-                    selected: tempDate.getDate() === selectedDay
-                });
-            }
-            return datesInMonth;
-        }
-        function getMonthsInYear(months, selectedMonth) {
-            return months.map(function (item, index) {
-                return {
-                    month: item,
-                    selected: index === selectedMonth
-                };
-            });
-        }
-        function getYears(forwards, date, count, selectedYear) {
-            var startDate = new Date(date).getFullYear();
-            var years = [];
-            if (forwards) {
-                for (var i = count - 1; i >= 0; i--) {
-                    var year = startDate + i;
-                    years.push({
-                        year: year,
-                        selected: year === selectedYear
-                    });
-                }
-            } else {
-                for (var _i = count - 1; _i >= 0; _i--) {
-                    var _year = startDate - _i;
-                    years.push({
-                        year: _year,
-                        selected: _year === selectedYear
-                    });
-                }
-            }
-            return years.reverse();
-        }
-        function getYearsFrom(date, count, selectedYear) {
-            return getYears(true, date, count, selectedYear);
-        }
-        function getYearsTo(date, count, selectedYear) {
-            return getYears(false, date, count, selectedYear);
-        }
-    },
-    function _3(module, exports) {
-        'use strict';
-        Object.defineProperty(exports, '__esModule', { value: true });
-        exports.formatValue = formatValue;
-        exports.fillMonth = fillMonth;
-        exports.assignState = assignState;
-        exports.convertToAST = convertToAST;
-        exports.splitMonthInWeeks = splitMonthInWeeks;
-        var _array = __paeckchen_require__(5).exports;
-        function formatValue(valueString, format) {
-            var parts = valueString.split('.');
-            if (format === 'dd.mm.yyyy') {
-                parts.reverse();
-            }
-            return parts.join('-');
-        }
-        function shiftDayIndex(dayIndex, shiftRule) {
-            return shiftRule[dayIndex];
-        }
-        function fillMonth(daysInMonth, weeksPerMonth, daysPerWeek) {
-            var maxDaysInMonth = daysPerWeek * weeksPerMonth;
-            var firstDayIndex = shiftDayIndex(daysInMonth[0].day, (0, _array.getShiftedArray)(7, 1));
-            var deltaToPrevMonth = firstDayIndex;
-            var deltaToNextMonth = (maxDaysInMonth - (daysInMonth.length + firstDayIndex)) % daysPerWeek;
-            var daysInPreviousMonth = [];
-            var daysInNextMonth = [];
-            if (deltaToPrevMonth > 0) {
-                daysInPreviousMonth = (0, _array.getDummyArray)(firstDayIndex, null);
-                if (deltaToNextMonth <= weeksPerMonth) {
-                    daysInNextMonth = (0, _array.getDummyArray)(deltaToNextMonth, null);
-                }
-            }
-            return {
-                daysInPreviousMonth: daysInPreviousMonth,
-                daysInMonth: daysInMonth,
-                daysInNextMonth: daysInNextMonth
-            };
-        }
-        function assignState(list, childrenKey) {
-            var items = list.map(function (val) {
-                if (!val) {
-                    return;
-                }
-                var className = [];
-                val.current && className.push('current');
-                val.selected && className.push('selected');
-                return convertToAST(val[childrenKey], { className: className });
-            });
-            return items;
-        }
-        function convertToAST(children, attrs) {
-            return Object.assign({ children: children }, attrs);
-        }
-        function splitMonthInWeeks(days, weeksPerMonth, daysPerWeek) {
-            var weeks = [];
-            for (var i = weeksPerMonth - 1; i >= 0; i--) {
-                var daysInWeek = days.slice(daysPerWeek * i, daysPerWeek * (i + 1));
-                var dateNames = assignState(daysInWeek, 'date');
-                weeks.unshift(dateNames);
-            }
-            return weeks;
-        }
-    },
-    function _4(module, exports) {
         'use strict';
         Object.defineProperty(exports, '__esModule', { value: true });
         exports.renderInNode = renderInNode;
@@ -313,6 +175,159 @@ var modules = [
                 listNode.appendChild(value && Object.keys(value).length ? extendNode(listItemInstance, value) : listItemInstance);
             });
             return listNode;
+        }
+    },
+    function _3(module, exports) {
+        'use strict';
+        Object.defineProperty(exports, '__esModule', { value: true });
+        exports.fillMonth = fillMonth;
+        exports.assignState = assignState;
+        exports.convertToAST = convertToAST;
+        exports.splitMonthInWeeks = splitMonthInWeeks;
+        var _array = __paeckchen_require__(5).exports;
+        function shiftDayIndex(dayIndex, shiftRule) {
+            return shiftRule[dayIndex];
+        }
+        function fillMonth(daysInMonth, weeksPerMonth, daysPerWeek) {
+            var maxDaysInMonth = daysPerWeek * weeksPerMonth;
+            var firstDayIndex = shiftDayIndex(daysInMonth[0].day, (0, _array.getShiftedArray)(7, 1));
+            var deltaToPrevMonth = firstDayIndex;
+            var deltaToNextMonth = (maxDaysInMonth - (daysInMonth.length + firstDayIndex)) % daysPerWeek;
+            var daysInPreviousMonth = [];
+            var daysInNextMonth = [];
+            if (deltaToPrevMonth > 0) {
+                daysInPreviousMonth = (0, _array.getDummyArray)(firstDayIndex, null);
+                if (deltaToNextMonth <= weeksPerMonth) {
+                    daysInNextMonth = (0, _array.getDummyArray)(deltaToNextMonth, null);
+                }
+            }
+            return {
+                daysInPreviousMonth: daysInPreviousMonth,
+                daysInMonth: daysInMonth,
+                daysInNextMonth: daysInNextMonth
+            };
+        }
+        function assignState(list, childrenKey) {
+            var items = list.map(function (val) {
+                if (!val) {
+                    return;
+                }
+                var className = [];
+                val.current && className.push('current');
+                val.selected && className.push('selected');
+                return convertToAST(val[childrenKey], { className: className });
+            });
+            return items;
+        }
+        function convertToAST(children, attrs) {
+            return Object.assign({ children: children }, attrs);
+        }
+        function splitMonthInWeeks(days, weeksPerMonth, daysPerWeek) {
+            var weeks = [];
+            for (var i = weeksPerMonth - 1; i >= 0; i--) {
+                var daysInWeek = days.slice(daysPerWeek * i, daysPerWeek * (i + 1));
+                var dateNames = assignState(daysInWeek, 'date');
+                weeks.unshift(dateNames);
+            }
+            return weeks;
+        }
+    },
+    function _4(module, exports) {
+        'use strict';
+        Object.defineProperty(exports, '__esModule', { value: true });
+        exports.parseDate = parseDate;
+        exports.getDaysPerMonth = getDaysPerMonth;
+        exports.getDatesInMonth = getDatesInMonth;
+        exports.getMonthsInYear = getMonthsInYear;
+        exports.getYearsFrom = getYearsFrom;
+        exports.getYearsTo = getYearsTo;
+        function validateDate(date) {
+            if (date != 'Invalid Date') {
+                return date;
+            } else {
+                return null;
+            }
+        }
+        function parseDate(dateString, format) {
+            var parts = [];
+            switch (format) {
+            case 'dd.mm.yyyy':
+                parts = dateString.split('.').reverse();
+                break;
+            case 'dd/mm/yyyy':
+                parts = dateString.split('/').reverse();
+                break;
+            case 'mm.dd.yyyy':
+                parts = dateString.split('.');
+                parts.unshift(parts.pop());
+                break;
+            default:
+                parts = dateString.split('-');
+                break;
+            }
+            return validateDate(new Date(parts.join('-')));
+        }
+        function compareDates(date1, date2) {
+            return date1.getFullYear() === date2.getFullYear() && date1.getMonth() === date2.getMonth() && date1.getDate() === date2.getDate();
+        }
+        function getDaysPerMonth(date) {
+            var tempDate = new Date(date);
+            tempDate.setDate(1);
+            tempDate.setMonth(tempDate.getMonth() + 1);
+            tempDate.setDate(0);
+            return tempDate.getDate();
+        }
+        function getDatesInMonth(date, selectedDay) {
+            var tempDate = new Date(date);
+            var daysPerMonth = getDaysPerMonth(date);
+            var datesInMonth = [];
+            for (var i = daysPerMonth; i > 0; i--) {
+                var actualDate = new Date(tempDate.setDate(i));
+                datesInMonth.unshift({
+                    fullDate: actualDate,
+                    date: tempDate.getDate(),
+                    day: tempDate.getDay(),
+                    current: compareDates(actualDate, new Date()),
+                    selected: tempDate.getDate() === selectedDay
+                });
+            }
+            return datesInMonth;
+        }
+        function getMonthsInYear(months, selectedMonth) {
+            return months.map(function (item, index) {
+                return {
+                    month: item,
+                    selected: index === selectedMonth
+                };
+            });
+        }
+        function getYears(forwards, date, count, selectedYear) {
+            var startDate = new Date(date).getFullYear();
+            var years = [];
+            if (forwards) {
+                for (var i = count - 1; i >= 0; i--) {
+                    var year = startDate + i;
+                    years.push({
+                        year: year,
+                        selected: year === selectedYear
+                    });
+                }
+            } else {
+                for (var _i = count - 1; _i >= 0; _i--) {
+                    var _year = startDate - _i;
+                    years.push({
+                        year: _year,
+                        selected: _year === selectedYear
+                    });
+                }
+            }
+            return years.reverse();
+        }
+        function getYearsFrom(date, count, selectedYear) {
+            return getYears(true, date, count, selectedYear);
+        }
+        function getYearsTo(date, count, selectedYear) {
+            return getYears(false, date, count, selectedYear);
         }
     },
     function _5(module, exports) {

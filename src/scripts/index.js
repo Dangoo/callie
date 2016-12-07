@@ -7,7 +7,7 @@ import {
   getYearsTo
 } from './date';
 import {
-  formatValue,
+  parseDate,
   fillMonth,
   splitMonthInWeeks,
   convertToAST,
@@ -20,30 +20,34 @@ import {
 } from './helper/dom';
 
 export default function datepicker(element, options) {
-  let inputNode = element.querySelector('[data-role=input]');
+
+  const defaultOpts = {
+    weeksPerMonth: 6,
+    daysPerWeek: 7,
+    useWeeks: true,
+    containerSelector: '[data-role=container]',
+    daysTargetSelector: '[data-role=days]',
+    monthsTargetSelector: '[data-role=months]',
+    yearsTargetSelector: '[data-role=years]',
+    format: 'dd.mm.yyyy'
+  };
+
+  const inputNode = element.querySelector('[data-role=input]');
+  const dateNow = new Date();
+  const localOpts = {
+    _value: inputNode.value,
+    _maxDate: inputNode.max ? new Date(inputNode.max) : dateNow,
+    _minDate: inputNode.min ? new Date(inputNode.min) : new Date(0),
+    _selectedDate: inputNode.value ? parseDate(inputNode.value) : undefined
+  }
 
   const opts = Object.assign(
-    {
-      weeksPerMonth: 6,
-      daysPerWeek: 7,
-      useWeeks: true,
-      containerSelector: '[data-role=container]',
-      daysTargetSelector: '[data-role=days]',
-      monthsTargetSelector: '[data-role=months]',
-      yearsTargetSelector: '[data-role=years]',
-      maxDate: inputNode.max && new Date(inputNode.max),
-      minDate: inputNode.min && new Date(inputNode.min)
-    },
-    options
+    defaultOpts,
+    options,
+    localOpts
   );
 
   console.log(opts);
-
-  let selectedDate = {
-    day: 12,
-    month: 5,
-    year: 2016
-  };
 
   const dateNames = getDateNames();
   let containerNode;
@@ -52,7 +56,7 @@ export default function datepicker(element, options) {
   let yearsViewNode;
 
   function updatePicker(date) {
-    const datesInMonth = getDatesInMonth(date, selectedDate.day);
+    const datesInMonth = getDatesInMonth(date, opts._selectedDate.getDate());
     const month = fillMonth(datesInMonth, opts.weeksPerMonth, opts.daysPerWeek);
     let weeksOfMonth = [];
     let dateNamesAST = null;
@@ -78,12 +82,12 @@ export default function datepicker(element, options) {
 
     const daysTable = buildTable(dateNamesAST, weeksOfMonth);
     const monthsAST = assignState(
-      getMonthsInYear(dateNames.months, selectedDate.month),
+      getMonthsInYear(dateNames.months, opts._selectedDate.getMonth()),
       'month'
     );
     const monthsList = buildList('ol', monthsAST, 'month');
     const yearsAST = assignState(
-      getYearsTo(opts.maxDate, 100, selectedDate.year),
+      getYearsTo(opts._maxDate, 100, opts._selectedDate.getFullYear()),
       'year'
     );
     const yearsList = buildList('ol', yearsAST, 'years');
@@ -94,21 +98,13 @@ export default function datepicker(element, options) {
   }
 
   function handleChange(e) {
-    const value = e.target.value;
-    const date = new Date(
-      formatValue(value, 'dd.mm.yyyy')
-    );
+    const date = parseDate(e.target.value, opts.format);
 
-    // Simple test if date is valid
-    if (date == 'Invalid Date') {
+    if (!date) {
       return;
     }
 
-    selectedDate = {
-      day: date.getDate(),
-      month: date.getMonth(),
-      year: date.getFullYear()
-    };
+    opts._selectedDate = date;
 
     updatePicker(date);
   }
@@ -117,11 +113,11 @@ export default function datepicker(element, options) {
     element.addEventListener('change', handleChange);
 
     // First init
-    element.value = new Date().toISOString().slice(0, 10);
+    // element.value = new Date().toISOString().slice(0, 10);
 
     containerNode = element.querySelector(opts.containerSelector);
     daysViewNode = containerNode.querySelector(opts.daysTargetSelector);
-    monthsViewNode = element.querySelector(opts.monthsTargetSelector);
+    monthsViewNode = containerNode.querySelector(opts.monthsTargetSelector);
     yearsViewNode = containerNode.querySelector(opts.yearsTargetSelector);
 
     updatePicker(new Date());

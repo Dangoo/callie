@@ -1,4 +1,50 @@
 /**
+ * Validate a given date
+ *
+ * @param   date Date Date to be validated
+ * @returns      Date
+ */
+function validateDate(date) {
+  // Simple test if date is valid
+  if (date != 'Invalid Date') {
+    return date;
+  } else {
+    return null;
+  }
+}
+
+/**
+ * Parses a date according to a given scheme
+ *
+ * @param   dateString String Datestring to be parseDate
+ * @param   format     String Date format string e.g. 'dd.mm.yyyy'
+ *
+ * @returns            Date
+ */
+export function parseDate(dateString, format) {
+  let parts = [];
+  switch (format) {
+    case 'dd.mm.yyyy':
+      parts = dateString.split('.').reverse();
+      break;
+    case 'dd/mm/yyyy':
+      parts = dateString.split('/').reverse();
+      break;
+    case 'mm.dd.yyyy':
+      parts = dateString.split('.');
+      parts.unshift(parts.pop());
+      break;
+    default:
+      parts = dateString.split('-')
+      break;
+  }
+
+  return validateDate(
+    new Date(parts.join('-'))
+  );
+}
+
+/**
  * Compare date to current (local) date
  *
  * @param   date Date    Date to compare to current date
