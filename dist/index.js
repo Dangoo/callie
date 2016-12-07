@@ -12,9 +12,9 @@ var modules = [
         Object.defineProperty(exports, '__esModule', { value: true });
         exports.default = datepicker;
         var _i18n = __paeckchen_require__(1).exports;
-        var _date = __paeckchen_require__(4).exports;
-        var _transform = __paeckchen_require__(3).exports;
-        var _dom = __paeckchen_require__(2).exports;
+        var _date = __paeckchen_require__(3).exports;
+        var _transform = __paeckchen_require__(2).exports;
+        var _dom = __paeckchen_require__(4).exports;
         function datepicker(element, options) {
             var defaultOpts = {
                 weeksPerMonth: 6,
@@ -32,7 +32,7 @@ var modules = [
                 _value: inputNode.value,
                 _maxDate: inputNode.max ? new Date(inputNode.max) : dateNow,
                 _minDate: inputNode.min ? new Date(inputNode.min) : new Date(0),
-                _selectedDate: inputNode.value ? (0, _transform.parseDate)(inputNode.value) : undefined
+                _selectedDate: inputNode.value ? (0, _date.parseDate)(inputNode.value) : undefined
             };
             var opts = Object.assign(defaultOpts, options, localOpts);
             console.log(opts);
@@ -64,7 +64,7 @@ var modules = [
                 (0, _dom.renderInNode)(yearsViewNode, yearsList);
             }
             function handleChange(e) {
-                var date = (0, _transform.parseDate)(e.target.value, opts.format);
+                var date = (0, _date.parseDate)(e.target.value, opts.format);
                 if (!date) {
                     return;
                 }
@@ -108,76 +108,6 @@ var modules = [
         }
     },
     function _2(module, exports) {
-        'use strict';
-        Object.defineProperty(exports, '__esModule', { value: true });
-        exports.renderInNode = renderInNode;
-        exports.buildTable = buildTable;
-        exports.buildList = buildList;
-        function clearChildren(node) {
-            while (node.hasChildNodes()) {
-                node.removeChild(node.lastChild);
-            }
-        }
-        function extendNode(node, data) {
-            if (data['children']) {
-                node.innerHTML = data['children'];
-            }
-            if (data.className) {
-                data.className.forEach(function (className) {
-                    return node.classList.add(className);
-                });
-            }
-            return node;
-        }
-        function renderInNode(target, node) {
-            clearChildren(target);
-            target.appendChild(node);
-        }
-        function buildTableRow(cells, cellNodeName) {
-            var row = document.createElement('tr');
-            var cell = document.createElement(cellNodeName);
-            cells.forEach(function (value) {
-                var cellInstance = cell.cloneNode(false);
-                row.appendChild(value && Object.keys(value).length ? extendNode(cellInstance, value) : cellInstance);
-            });
-            return row;
-        }
-        function buildTable(headData, bodyData, footData) {
-            var tableNode = document.createElement('table');
-            if (headData) {
-                var thead = document.createElement('thead');
-                thead.appendChild(buildTableRow(headData, 'th'));
-                tableNode.appendChild(thead);
-            }
-            if (bodyData) {
-                (function () {
-                    var tbody = document.createElement('tbody');
-                    if (bodyData.length) {
-                        bodyData.forEach(function (data) {
-                            tbody.appendChild(buildTableRow(data, 'td'));
-                        });
-                    }
-                    tableNode.appendChild(tbody);
-                }());
-            }
-            if (footData) {
-                var tfoot = document.createElement('tfoot');
-                tfoot.appendChild(buildTableRow(footData, 'td'));
-                tableNode.appendChild(tfoot);
-            }
-            return tableNode;
-        }
-        function buildList(listNodeName, listItemData) {
-            var listNode = document.createElement(listNodeName);
-            var listItemNode = document.createElement('li');
-            listItemData.forEach(function (value) {
-                var listItemInstance = listItemNode.cloneNode(false);
-                listNode.appendChild(value && Object.keys(value).length ? extendNode(listItemInstance, value) : listItemInstance);
-            });
-            return listNode;
-        }
-    },
-    function _3(module, exports) {
         'use strict';
         Object.defineProperty(exports, '__esModule', { value: true });
         exports.fillMonth = fillMonth;
@@ -232,7 +162,7 @@ var modules = [
             return weeks;
         }
     },
-    function _4(module, exports) {
+    function _3(module, exports) {
         'use strict';
         Object.defineProperty(exports, '__esModule', { value: true });
         exports.parseDate = parseDate;
@@ -328,6 +258,76 @@ var modules = [
         }
         function getYearsTo(date, count, selectedYear) {
             return getYears(false, date, count, selectedYear);
+        }
+    },
+    function _4(module, exports) {
+        'use strict';
+        Object.defineProperty(exports, '__esModule', { value: true });
+        exports.renderInNode = renderInNode;
+        exports.buildTable = buildTable;
+        exports.buildList = buildList;
+        function clearChildren(node) {
+            while (node.hasChildNodes()) {
+                node.removeChild(node.lastChild);
+            }
+        }
+        function extendNode(node, data) {
+            if (data['children']) {
+                node.innerHTML = data['children'];
+            }
+            if (data.className) {
+                data.className.forEach(function (className) {
+                    return node.classList.add(className);
+                });
+            }
+            return node;
+        }
+        function renderInNode(target, node) {
+            clearChildren(target);
+            target.appendChild(node);
+        }
+        function buildTableRow(cells, cellNodeName) {
+            var row = document.createElement('tr');
+            var cell = document.createElement(cellNodeName);
+            cells.forEach(function (value) {
+                var cellInstance = cell.cloneNode(false);
+                row.appendChild(value && Object.keys(value).length ? extendNode(cellInstance, value) : cellInstance);
+            });
+            return row;
+        }
+        function buildTable(headData, bodyData, footData) {
+            var tableNode = document.createElement('table');
+            if (headData) {
+                var thead = document.createElement('thead');
+                thead.appendChild(buildTableRow(headData, 'th'));
+                tableNode.appendChild(thead);
+            }
+            if (bodyData) {
+                (function () {
+                    var tbody = document.createElement('tbody');
+                    if (bodyData.length) {
+                        bodyData.forEach(function (data) {
+                            tbody.appendChild(buildTableRow(data, 'td'));
+                        });
+                    }
+                    tableNode.appendChild(tbody);
+                }());
+            }
+            if (footData) {
+                var tfoot = document.createElement('tfoot');
+                tfoot.appendChild(buildTableRow(footData, 'td'));
+                tableNode.appendChild(tfoot);
+            }
+            return tableNode;
+        }
+        function buildList(listNodeName, listItemData) {
+            var listNode = document.createElement(listNodeName);
+            var listItemNode = document.createElement('li');
+            listItemData.forEach(function (value) {
+                var listItemInstance = listItemNode.cloneNode(false);
+                listNode.appendChild(value && Object.keys(value).length ? extendNode(listItemInstance, value) : listItemInstance);
+            });
+            return listNode;
         }
     },
     function _5(module, exports) {
