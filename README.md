@@ -23,3 +23,10 @@ Callie is a lightweight modular datepicker splitted into three main components:
 | -------- | ----------------------------------- |
 | --slide  | Adds slide transition between views |
 | --fade   | Adds fade transition between views  |
+
+## Browser support
+* Chrome
+* Safari 9+
+  * For Safari 9 see `dateNamesFallback` in [JS options](#js-options)
+* Firefox
+* Internet Explorer 11+
