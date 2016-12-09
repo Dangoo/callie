@@ -1,4 +1,17 @@
-export function getDateNames(locale = navigator.language) {
+/**
+ * Get names for days and month
+ *
+ * @param  locale   String Locale string, default is navigator.language
+ * @param  fallback Object Fallback names for Browser not supporting ES Internationalization API
+ *
+ * @returns         Object Object with names
+ */
+export function getDateNames(locale = navigator.language, fallback) {
+  // Test if ES Internationalization API is available
+  if (typeof Intl !== 'object') {
+    return fallback;
+  }
+
   const monthNames = [];
   const dayNames = [];
   // Set date to Thu Jan 01 1970 01:00:00 GMT+0100 (CET)
