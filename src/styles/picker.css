@@ -42,6 +42,7 @@
 
 .date-input__view-months ol > li,
 .date-input__view-years ol > li {
+  position: relative;
   display: flex;
   align-items: center;
   height: var(--cell-height);
