@@ -1,6 +1,7 @@
 import { getDateNames } from './helper/i18n';
 import {
   parseDate,
+  dateInRange,
   getDaysPerMonth,
   getDatesInMonth,
   getMonthsInYear,
@@ -28,7 +29,11 @@ export default function datepicker(element, options) {
     daysTargetSelector: '[data-role=days]',
     monthsTargetSelector: '[data-role=months]',
     yearsTargetSelector: '[data-role=years]',
-    format: 'dd.mm.yyyy'
+    format: 'dd.mm.yyyy',
+    dateNamesFallback: {
+      days: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+      months: ['January', 'February','March', 'April', 'Mai', 'June', 'July', 'August', 'September', 'October', 'November', 'December']
+    }
   };
 
   const inputNode = element.querySelector('[data-role=input]');
@@ -46,9 +51,7 @@ export default function datepicker(element, options) {
     localOpts
   );
 
-  console.log(opts);
-
-  const dateNames = getDateNames();
+  const dateNames = getDateNames(undefined, opts.dateNamesFallback);
   let containerNode;
   let daysViewNode;
   let monthsViewNode;
@@ -108,20 +111,18 @@ export default function datepicker(element, options) {
   function handleChange(e) {
     const date = parseDate(e.target.value, opts.format);
 
-    if (!date) {
-      return;
+    if (
+      date &&
+      dateInRange(date,  opts._minDate, opts._maxDate)
+    ) {
+      opts._selectedDate = date;
+
+      updatePicker(date);
     }
-
-    opts._selectedDate = date;
-
-    updatePicker(date);
   }
 
   function init() {
     element.addEventListener('change', handleChange);
-
-    // First init
-    // element.value = new Date().toISOString().slice(0, 10);
 
     containerNode = element.querySelector(opts.containerSelector);
     daysViewNode = containerNode.querySelector(opts.daysTargetSelector);

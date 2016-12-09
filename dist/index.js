@@ -11,8 +11,8 @@ var modules = [
         'use strict';
         Object.defineProperty(exports, '__esModule', { value: true });
         exports.default = datepicker;
-        var _i18n = __paeckchen_require__(2).exports;
-        var _date = __paeckchen_require__(1).exports;
+        var _i18n = __paeckchen_require__(1).exports;
+        var _date = __paeckchen_require__(2).exports;
         var _transform = __paeckchen_require__(3).exports;
         var _dom = __paeckchen_require__(4).exports;
         function datepicker(element, options) {
@@ -24,7 +24,32 @@ var modules = [
                 daysTargetSelector: '[data-role=days]',
                 monthsTargetSelector: '[data-role=months]',
                 yearsTargetSelector: '[data-role=years]',
-                format: 'dd.mm.yyyy'
+                format: 'dd.mm.yyyy',
+                dateNamesFallback: {
+                    days: [
+                        'Mon',
+                        'Tue',
+                        'Wed',
+                        'Thu',
+                        'Fri',
+                        'Sat',
+                        'Sun'
+                    ],
+                    months: [
+                        'January',
+                        'February',
+                        'March',
+                        'April',
+                        'Mai',
+                        'June',
+                        'July',
+                        'August',
+                        'September',
+                        'October',
+                        'November',
+                        'December'
+                    ]
+                }
             };
             var inputNode = element.querySelector('[data-role=input]');
             var dateNow = new Date();
@@ -35,8 +60,7 @@ var modules = [
                 _selectedDate: inputNode.value ? (0, _date.parseDate)(inputNode.value) : undefined
             };
             var opts = Object.assign(defaultOpts, options, localOpts);
-            console.log(opts);
-            var dateNames = (0, _i18n.getDateNames)();
+            var dateNames = (0, _i18n.getDateNames)(undefined, opts.dateNamesFallback);
             var containerNode = void 0;
             var daysViewNode = void 0;
             var monthsViewNode = void 0;
@@ -65,11 +89,10 @@ var modules = [
             }
             function handleChange(e) {
                 var date = (0, _date.parseDate)(e.target.value, opts.format);
-                if (!date) {
-                    return;
+                if (date && (0, _date.dateInRange)(date, opts._minDate, opts._maxDate)) {
+                    opts._selectedDate = date;
+                    updatePicker(date);
                 }
-                opts._selectedDate = date;
-                updatePicker(date);
             }
             function init() {
                 element.addEventListener('change', handleChange);
@@ -89,7 +112,40 @@ var modules = [
     function _1(module, exports) {
         'use strict';
         Object.defineProperty(exports, '__esModule', { value: true });
+        var _typeof = typeof Symbol === 'function' && typeof Symbol.iterator === 'symbol' ? function (obj) {
+            return typeof obj;
+        } : function (obj) {
+            return obj && typeof Symbol === 'function' && obj.constructor === Symbol && obj !== Symbol.prototype ? 'symbol' : typeof obj;
+        };
+        exports.getDateNames = getDateNames;
+        function getDateNames() {
+            var locale = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : navigator.language;
+            var fallback = arguments[1];
+            if ((typeof Intl === 'undefined' ? 'undefined' : _typeof(Intl)) !== 'object') {
+                return fallback;
+            }
+            var monthNames = [];
+            var dayNames = [];
+            var date = new Date(0);
+            for (var i = 11; i >= 0; i--) {
+                date.setMonth(i);
+                monthNames.push(date.toLocaleString(locale, { month: 'long' }));
+            }
+            for (var _i = 6; _i >= 0; _i--) {
+                date.setDate(5 + _i);
+                dayNames.push(date.toLocaleString(locale, { weekday: 'short' }));
+            }
+            return {
+                days: dayNames.reverse(),
+                months: monthNames.reverse()
+            };
+        }
+    },
+    function _2(module, exports) {
+        'use strict';
+        Object.defineProperty(exports, '__esModule', { value: true });
         exports.parseDate = parseDate;
+        exports.dateInRange = dateInRange;
         exports.getDaysPerMonth = getDaysPerMonth;
         exports.getDatesInMonth = getDatesInMonth;
         exports.getMonthsInYear = getMonthsInYear;
@@ -122,6 +178,10 @@ var modules = [
         }
         function compareDates(date1, date2) {
             return date1.getFullYear() === date2.getFullYear() && date1.getMonth() === date2.getMonth() && date1.getDate() === date2.getDate();
+        }
+        function dateInRange(date, minDate, maxDate) {
+            var dateMs = date.getTime();
+            return dateMs >= minDate.getTime() && dateMs <= maxDate.getTime();
         }
         function getDaysPerMonth(date) {
             var tempDate = new Date(date);
@@ -166,29 +226,6 @@ var modules = [
                 });
             }
             return years;
-        }
-    },
-    function _2(module, exports) {
-        'use strict';
-        Object.defineProperty(exports, '__esModule', { value: true });
-        exports.getDateNames = getDateNames;
-        function getDateNames() {
-            var locale = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : navigator.language;
-            var monthNames = [];
-            var dayNames = [];
-            var date = new Date(0);
-            for (var i = 11; i >= 0; i--) {
-                date.setMonth(i);
-                monthNames.push(date.toLocaleString(locale, { month: 'long' }));
-            }
-            for (var _i = 6; _i >= 0; _i--) {
-                date.setDate(5 + _i);
-                dayNames.push(date.toLocaleString(locale, { weekday: 'short' }));
-            }
-            return {
-                days: dayNames.reverse(),
-                months: monthNames.reverse()
-            };
         }
     },
     function _3(module, exports) {

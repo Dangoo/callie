@@ -61,6 +61,20 @@ function compareDates(date1, date2) {
 }
 
 /**
+ * Compare two dates
+ *
+ * @param   date    Date    First date to compare
+ * @param   minDate Date    Minimal date
+ * @param   maxDate Date    Maximum date
+ *
+ * @returns         Boolean Date is in Range
+ */
+export function dateInRange(date, minDate, maxDate) {
+  const dateMs = date.getTime();
+  return dateMs >= minDate.getTime() && dateMs <= maxDate.getTime();
+}
+
+/**
  * Converts time interval from ms to years, months and days
  */
 
