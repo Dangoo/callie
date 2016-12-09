@@ -58,6 +58,7 @@ export function assignState(list, childrenKey) {
     const className = [];
     val.current && className.push('current');
     val.selected && className.push('selected');
+    val.disabled && className.push('disabled');
 
     return convertToAST(
       val[childrenKey],

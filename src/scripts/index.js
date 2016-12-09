@@ -4,8 +4,7 @@ import {
   getDaysPerMonth,
   getDatesInMonth,
   getMonthsInYear,
-  getYearsFrom,
-  getYearsTo
+  getYears
 } from './date';
 import {
   fillMonth,
@@ -56,7 +55,12 @@ export default function datepicker(element, options) {
   let yearsViewNode;
 
   function updatePicker(date) {
-    const datesInMonth = getDatesInMonth(date, opts._selectedDate.getDate());
+    const datesInMonth = getDatesInMonth(
+      date,
+      opts._selectedDate.getDate(),
+      opts._minDate,
+      opts._maxDate
+    );
     const month = fillMonth(datesInMonth, opts.weeksPerMonth, opts.daysPerWeek);
     let weeksOfMonth = [];
     let dateNamesAST = null;
@@ -87,7 +91,11 @@ export default function datepicker(element, options) {
     );
     const monthsList = buildList('ol', monthsAST, 'month');
     const yearsAST = assignState(
-      getYearsTo(opts._maxDate, 100, opts._selectedDate.getFullYear()),
+      getYears(
+        opts._minDate.getFullYear(),
+        opts._maxDate.getFullYear(),
+        opts._selectedDate.getFullYear()
+      ),
       'year'
     );
     const yearsList = buildList('ol', yearsAST, 'years');
@@ -120,7 +128,9 @@ export default function datepicker(element, options) {
     monthsViewNode = containerNode.querySelector(opts.monthsTargetSelector);
     yearsViewNode = containerNode.querySelector(opts.yearsTargetSelector);
 
-    updatePicker(new Date());
+    if (opts._selectedDate) {
+      updatePicker(opts._selectedDate);
+    }
   }
 
   init();

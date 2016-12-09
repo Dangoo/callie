@@ -1,12 +1,13 @@
 @import '_vars';
 
-.date-input__view--days table {
+.date-input__view-days table {
   margin-bottom: 1px;
   border-collapse: collapse;
 }
 
-.date-input__view--days th,
-.date-input__view--days td {
+.date-input__view-days th,
+.date-input__view-days td {
+  position: relative;
   width: var(--cell-height);
   height: var(--cell-height);
   padding: 0;
@@ -14,15 +15,19 @@
   border: 1px solid var(--border-color);
 }
 
-.date-input__view--days th {
+.date-input__view-days th {
   vertical-align: bottom;
   border-top-color: transparent;
   border-right-color: transparent;
   border-left-color: transparent;
 }
 
-.date-input__view--months ol,
-.date-input__view--years ol {
+.date-input__view-days td:not(.disabled) {
+  cursor: pointer;
+}
+
+.date-input__view-months ol,
+.date-input__view-years ol {
   margin: 0;
   padding: 0;
   list-style: none;
@@ -30,13 +35,13 @@
   border-width: 0 1px 0 0;
 }
 
-.date-input__view--months ol {
+.date-input__view-months ol {
   column-count: 2;
   column-gap: 0;
 }
 
-.date-input__view--months ol > li,
-.date-input__view--years ol > li {
+.date-input__view-months ol > li,
+.date-input__view-years ol > li {
   display: flex;
   align-items: center;
   height: var(--cell-height);
@@ -45,27 +50,29 @@
   border-width: 0 0 1px 1px;
 }
 
-.date-input__view--years ol {
+.date-input__view-years ol {
   position: absolute;
   overflow-y: auto;
   max-height: 100%;
   width: 100%;
 }
 
-.date-input__view--days .current {
+.date-input__view-days .current,
+.date-input__view-days .selected,
+.date-input__view-months .selected,
+.date-input__view-years .selected {
   font-weight: bold;
 }
 
-.date-input__view--days .selected,
-.date-input__view--months .selected,
-.date-input__view--years .selected {
-  position: relative;
-  font-weight: bold;
+.date-input__view-days .disabled,
+.date-input__view-months .disabled {
+  color: var(--disabled-color);
+  cursor: not-allowed;
 }
 
-.date-input__view--days .selected::before,
-.date-input__view--months .selected::before,
-.date-input__view--years .selected::before {
+.date-input__view-days .selected::before,
+.date-input__view-months .selected::before,
+.date-input__view-years .selected::before {
   content: '';
   display: block;
   position: absolute;
@@ -75,12 +82,12 @@
   border: 0 solid var(--highlight-color);
 }
 
-.date-input__view--days .selected::before {
+.date-input__view-days .selected::before {
   right: 0;
   border-width: 3px;
 }
 
-.date-input__view--months .selected::before,
-.date-input__view--years .selected::before {
+.date-input__view-months .selected::before,
+.date-input__view-years .selected::before {
   border-left-width: 3px;
 }

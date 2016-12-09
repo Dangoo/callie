@@ -45,10 +45,12 @@ export function parseDate(dateString, format) {
 }
 
 /**
- * Compare date to current (local) date
+ * Compare two dates
  *
- * @param   date Date    Date to compare to current date
- * @returns      Boolean Date is today or not
+ * @param   date1 Date    First date to compare to second one
+ * @param   date2 Date    Second date to compare to first one
+ *
+ * @returns       Boolean Date is equal or not
  */
 function compareDates(date1, date2) {
   return (
@@ -57,6 +59,10 @@ function compareDates(date1, date2) {
     date1.getDate() === date2.getDate()
   );
 }
+
+/**
+ * Converts time interval from ms to years, months and days
+ */
 
 /**
  * getDaysPerMonth
@@ -83,7 +89,7 @@ export function getDaysPerMonth(date) {
  *
  * @returns             Object List of dates in current month
  */
-export function getDatesInMonth(date, selectedDay) {
+export function getDatesInMonth(date, selectedDay, minDate, maxDate) {
   let tempDate = new Date(date);
   const daysPerMonth = getDaysPerMonth(date);
   const datesInMonth = [];
@@ -96,7 +102,10 @@ export function getDatesInMonth(date, selectedDay) {
       date: tempDate.getDate(),
       day: tempDate.getDay(),
       current: compareDates(actualDate, new Date()),
-      selected: tempDate.getDate() === selectedDay
+      selected: tempDate.getDate() === selectedDay,
+      disabled:
+        (tempDate.getTime() < minDate.getTime()) ||
+        (tempDate.getTime() > maxDate.getTime())
     });
   }
 
@@ -120,35 +129,17 @@ export function getMonthsInYear(months, selectedMonth) {
   });
 }
 
-function getYears(forwards, date, count, selectedYear) {
-  const startDate = new Date(date).getFullYear();
+export function getYears(yearFrom, yearTo, selectedYear) {
+  const delta = Math.abs(yearTo - yearFrom);
   const years = [];
 
-  if(forwards) {
-    for (let i = count - 1; i >= 0; i--) {
-      const year = startDate + i;
-      years.push({
-        year,
-        selected: year === selectedYear
-      });
-    }
-  } else {
-    for (let i = count - 1; i >= 0; i--) {
-      const year = startDate - i;
-      years.push({
-        year,
-        selected: year === selectedYear
-      });
-    }
+  for (let i = delta; i >= 0; i--) {
+    const year = yearFrom + i;
+    years.push({
+      year,
+      selected: year === selectedYear
+    });
   }
 
-  return years.reverse();
-}
-
-export function getYearsFrom(date, count, selectedYear) {
-  return getYears(true, date, count, selectedYear);
-}
-
-export function getYearsTo(date, count, selectedYear) {
-  return getYears(false, date, count, selectedYear);
+  return years;
 }

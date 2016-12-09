@@ -11,9 +11,9 @@ var modules = [
         'use strict';
         Object.defineProperty(exports, '__esModule', { value: true });
         exports.default = datepicker;
-        var _i18n = __paeckchen_require__(1).exports;
-        var _date = __paeckchen_require__(3).exports;
-        var _transform = __paeckchen_require__(2).exports;
+        var _i18n = __paeckchen_require__(2).exports;
+        var _date = __paeckchen_require__(1).exports;
+        var _transform = __paeckchen_require__(3).exports;
         var _dom = __paeckchen_require__(4).exports;
         function datepicker(element, options) {
             var defaultOpts = {
@@ -42,7 +42,7 @@ var modules = [
             var monthsViewNode = void 0;
             var yearsViewNode = void 0;
             function updatePicker(date) {
-                var datesInMonth = (0, _date.getDatesInMonth)(date, opts._selectedDate.getDate());
+                var datesInMonth = (0, _date.getDatesInMonth)(date, opts._selectedDate.getDate(), opts._minDate, opts._maxDate);
                 var month = (0, _transform.fillMonth)(datesInMonth, opts.weeksPerMonth, opts.daysPerWeek);
                 var weeksOfMonth = [];
                 var dateNamesAST = null;
@@ -57,7 +57,7 @@ var modules = [
                 var daysTable = (0, _dom.buildTable)(dateNamesAST, weeksOfMonth);
                 var monthsAST = (0, _transform.assignState)((0, _date.getMonthsInYear)(dateNames.months, opts._selectedDate.getMonth()), 'month');
                 var monthsList = (0, _dom.buildList)('ol', monthsAST, 'month');
-                var yearsAST = (0, _transform.assignState)((0, _date.getYearsTo)(opts._maxDate, 100, opts._selectedDate.getFullYear()), 'year');
+                var yearsAST = (0, _transform.assignState)((0, _date.getYears)(opts._minDate.getFullYear(), opts._maxDate.getFullYear(), opts._selectedDate.getFullYear()), 'year');
                 var yearsList = (0, _dom.buildList)('ol', yearsAST, 'years');
                 (0, _dom.renderInNode)(daysViewNode, daysTable);
                 (0, _dom.renderInNode)(monthsViewNode, monthsList);
@@ -77,7 +77,9 @@ var modules = [
                 daysViewNode = containerNode.querySelector(opts.daysTargetSelector);
                 monthsViewNode = containerNode.querySelector(opts.monthsTargetSelector);
                 yearsViewNode = containerNode.querySelector(opts.yearsTargetSelector);
-                updatePicker(new Date());
+                if (opts._selectedDate) {
+                    updatePicker(opts._selectedDate);
+                }
             }
             init();
         }
@@ -85,6 +87,88 @@ var modules = [
         datepicker(input);
     },
     function _1(module, exports) {
+        'use strict';
+        Object.defineProperty(exports, '__esModule', { value: true });
+        exports.parseDate = parseDate;
+        exports.getDaysPerMonth = getDaysPerMonth;
+        exports.getDatesInMonth = getDatesInMonth;
+        exports.getMonthsInYear = getMonthsInYear;
+        exports.getYears = getYears;
+        function validateDate(date) {
+            if (date != 'Invalid Date') {
+                return date;
+            } else {
+                return null;
+            }
+        }
+        function parseDate(dateString, format) {
+            var parts = [];
+            switch (format) {
+            case 'dd.mm.yyyy':
+                parts = dateString.split('.').reverse();
+                break;
+            case 'dd/mm/yyyy':
+                parts = dateString.split('/').reverse();
+                break;
+            case 'mm.dd.yyyy':
+                parts = dateString.split('.');
+                parts.unshift(parts.pop());
+                break;
+            default:
+                parts = dateString.split('-');
+                break;
+            }
+            return validateDate(new Date(parts.join('-')));
+        }
+        function compareDates(date1, date2) {
+            return date1.getFullYear() === date2.getFullYear() && date1.getMonth() === date2.getMonth() && date1.getDate() === date2.getDate();
+        }
+        function getDaysPerMonth(date) {
+            var tempDate = new Date(date);
+            tempDate.setDate(1);
+            tempDate.setMonth(tempDate.getMonth() + 1);
+            tempDate.setDate(0);
+            return tempDate.getDate();
+        }
+        function getDatesInMonth(date, selectedDay, minDate, maxDate) {
+            var tempDate = new Date(date);
+            var daysPerMonth = getDaysPerMonth(date);
+            var datesInMonth = [];
+            for (var i = daysPerMonth; i > 0; i--) {
+                var actualDate = new Date(tempDate.setDate(i));
+                datesInMonth.unshift({
+                    fullDate: actualDate,
+                    date: tempDate.getDate(),
+                    day: tempDate.getDay(),
+                    current: compareDates(actualDate, new Date()),
+                    selected: tempDate.getDate() === selectedDay,
+                    disabled: tempDate.getTime() < minDate.getTime() || tempDate.getTime() > maxDate.getTime()
+                });
+            }
+            return datesInMonth;
+        }
+        function getMonthsInYear(months, selectedMonth) {
+            return months.map(function (item, index) {
+                return {
+                    month: item,
+                    selected: index === selectedMonth
+                };
+            });
+        }
+        function getYears(yearFrom, yearTo, selectedYear) {
+            var delta = Math.abs(yearTo - yearFrom);
+            var years = [];
+            for (var i = delta; i >= 0; i--) {
+                var year = yearFrom + i;
+                years.push({
+                    year: year,
+                    selected: year === selectedYear
+                });
+            }
+            return years;
+        }
+    },
+    function _2(module, exports) {
         'use strict';
         Object.defineProperty(exports, '__esModule', { value: true });
         exports.getDateNames = getDateNames;
@@ -107,7 +191,7 @@ var modules = [
             };
         }
     },
-    function _2(module, exports) {
+    function _3(module, exports) {
         'use strict';
         Object.defineProperty(exports, '__esModule', { value: true });
         exports.fillMonth = fillMonth;
@@ -145,6 +229,7 @@ var modules = [
                 var className = [];
                 val.current && className.push('current');
                 val.selected && className.push('selected');
+                val.disabled && className.push('disabled');
                 return convertToAST(val[childrenKey], { className: className });
             });
             return items;
@@ -160,104 +245,6 @@ var modules = [
                 weeks.unshift(dateNames);
             }
             return weeks;
-        }
-    },
-    function _3(module, exports) {
-        'use strict';
-        Object.defineProperty(exports, '__esModule', { value: true });
-        exports.parseDate = parseDate;
-        exports.getDaysPerMonth = getDaysPerMonth;
-        exports.getDatesInMonth = getDatesInMonth;
-        exports.getMonthsInYear = getMonthsInYear;
-        exports.getYearsFrom = getYearsFrom;
-        exports.getYearsTo = getYearsTo;
-        function validateDate(date) {
-            if (date != 'Invalid Date') {
-                return date;
-            } else {
-                return null;
-            }
-        }
-        function parseDate(dateString, format) {
-            var parts = [];
-            switch (format) {
-            case 'dd.mm.yyyy':
-                parts = dateString.split('.').reverse();
-                break;
-            case 'dd/mm/yyyy':
-                parts = dateString.split('/').reverse();
-                break;
-            case 'mm.dd.yyyy':
-                parts = dateString.split('.');
-                parts.unshift(parts.pop());
-                break;
-            default:
-                parts = dateString.split('-');
-                break;
-            }
-            return validateDate(new Date(parts.join('-')));
-        }
-        function compareDates(date1, date2) {
-            return date1.getFullYear() === date2.getFullYear() && date1.getMonth() === date2.getMonth() && date1.getDate() === date2.getDate();
-        }
-        function getDaysPerMonth(date) {
-            var tempDate = new Date(date);
-            tempDate.setDate(1);
-            tempDate.setMonth(tempDate.getMonth() + 1);
-            tempDate.setDate(0);
-            return tempDate.getDate();
-        }
-        function getDatesInMonth(date, selectedDay) {
-            var tempDate = new Date(date);
-            var daysPerMonth = getDaysPerMonth(date);
-            var datesInMonth = [];
-            for (var i = daysPerMonth; i > 0; i--) {
-                var actualDate = new Date(tempDate.setDate(i));
-                datesInMonth.unshift({
-                    fullDate: actualDate,
-                    date: tempDate.getDate(),
-                    day: tempDate.getDay(),
-                    current: compareDates(actualDate, new Date()),
-                    selected: tempDate.getDate() === selectedDay
-                });
-            }
-            return datesInMonth;
-        }
-        function getMonthsInYear(months, selectedMonth) {
-            return months.map(function (item, index) {
-                return {
-                    month: item,
-                    selected: index === selectedMonth
-                };
-            });
-        }
-        function getYears(forwards, date, count, selectedYear) {
-            var startDate = new Date(date).getFullYear();
-            var years = [];
-            if (forwards) {
-                for (var i = count - 1; i >= 0; i--) {
-                    var year = startDate + i;
-                    years.push({
-                        year: year,
-                        selected: year === selectedYear
-                    });
-                }
-            } else {
-                for (var _i = count - 1; _i >= 0; _i--) {
-                    var _year = startDate - _i;
-                    years.push({
-                        year: _year,
-                        selected: _year === selectedYear
-                    });
-                }
-            }
-            return years.reverse();
-        }
-        function getYearsFrom(date, count, selectedYear) {
-            return getYears(true, date, count, selectedYear);
-        }
-        function getYearsTo(date, count, selectedYear) {
-            return getYears(false, date, count, selectedYear);
         }
     },
     function _4(module, exports) {
