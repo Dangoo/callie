@@ -22,10 +22,6 @@
   border-left-color: transparent;
 }
 
-.date-input__view-days td:not(.disabled) {
-  cursor: pointer;
-}
-
 .date-input__view-months ol,
 .date-input__view-years ol {
   margin: 0;
@@ -56,6 +52,12 @@
   overflow-y: auto;
   max-height: 100%;
   width: 100%;
+}
+
+.date-input__view-days td:not(.disabled),
+.date-input__view-months ol > li,
+.date-input__view-years ol > li {
+  cursor: pointer;
 }
 
 .date-input__view-days .current,
