@@ -16,14 +16,23 @@ var modules = [
         var _transform = __paeckchen_require__(3).exports;
         var _dom = __paeckchen_require__(4).exports;
         function datepicker(element, options) {
+            var _inputNode = void 0;
+            var _containerNode = void 0;
+            var _daysViewNode = void 0;
+            var _monthsViewNode = void 0;
+            var _yearsViewNode = void 0;
+            var _opts = void 0;
+            var _localOpts = void 0;
+            var _dateNames = void 0;
+            var _dayNamesAST = void 0;
             var defaultOpts = {
                 weeksPerMonth: 6,
                 daysPerWeek: 7,
-                useWeeks: true,
                 containerSelector: '[data-role=container]',
                 daysTargetSelector: '[data-role=days]',
                 monthsTargetSelector: '[data-role=months]',
                 yearsTargetSelector: '[data-role=years]',
+                inputTargetSelector: '[data-role=input]',
                 format: 'dd.mm.yyyy',
                 dateNamesFallback: {
                     days: [
@@ -51,63 +60,85 @@ var modules = [
                     ]
                 }
             };
-            var inputNode = element.querySelector('[data-role=input]');
-            var dateNow = new Date();
-            var localOpts = {
-                _value: inputNode.value,
-                _maxDate: inputNode.max ? new Date(inputNode.max) : dateNow,
-                _minDate: inputNode.min ? new Date(inputNode.min) : new Date(0),
-                _selectedDate: inputNode.value ? (0, _date.parseDate)(inputNode.value) : undefined
-            };
-            var opts = Object.assign(defaultOpts, options, localOpts);
-            var dateNames = (0, _i18n.getDateNames)(undefined, opts.dateNamesFallback);
-            var containerNode = void 0;
-            var daysViewNode = void 0;
-            var monthsViewNode = void 0;
-            var yearsViewNode = void 0;
             function updatePicker(date) {
-                var datesInMonth = (0, _date.getDatesInMonth)(date, opts._selectedDate.getDate(), opts._minDate, opts._maxDate);
-                var month = (0, _transform.fillMonth)(datesInMonth, opts.weeksPerMonth, opts.daysPerWeek);
-                var weeksOfMonth = [];
-                var dateNamesAST = null;
-                if (opts.useWeeks) {
-                    weeksOfMonth = (0, _transform.splitMonthInWeeks)([].concat(month.daysInPreviousMonth, month.daysInMonth, month.daysInNextMonth), opts.weeksPerMonth, opts.daysPerWeek);
-                    dateNamesAST = dateNames.days.map(function (item) {
-                        return (0, _transform.convertToAST)(item);
-                    });
-                } else {
-                    weeksOfMonth = (0, _transform.splitMonthInWeeks)(month.daysInMonth, opts.weeksPerMonth, opts.daysPerWeek);
-                }
-                var daysTable = (0, _dom.buildTable)(dateNamesAST, weeksOfMonth);
-                var monthsAST = (0, _transform.assignState)((0, _date.getMonthsInYear)(dateNames.months, opts._selectedDate.getMonth()), 'month');
+                var datesInMonth = (0, _date.getDatesInMonth)(date, _localOpts.selectedDate.getDate(), _localOpts.minDate, _localOpts.maxDate);
+                var month = (0, _transform.fillMonth)(datesInMonth, _opts.weeksPerMonth, _opts.daysPerWeek);
+                var daysTable = (0, _dom.buildTable)(_localOpts.useWeeks ? _dayNamesAST : null, (0, _transform.getWeeksOfMonth)(month, _opts.weeksPerMonth, _opts.daysPerWeek, _localOpts.useWeeks));
+                var monthsAST = (0, _transform.assignState)((0, _date.getMonthsInYear)(_dateNames.months, _localOpts.selectedDate.getMonth()), 'monthName', 'month');
                 var monthsList = (0, _dom.buildList)('ol', monthsAST, 'month');
-                var yearsAST = (0, _transform.assignState)((0, _date.getYears)(opts._minDate.getFullYear(), opts._maxDate.getFullYear(), opts._selectedDate.getFullYear()), 'year');
+                var yearsAST = (0, _transform.assignState)((0, _date.getYears)(_localOpts.minDate.getFullYear(), _localOpts.maxDate.getFullYear(), _localOpts.selectedDate.getFullYear()), 'year', 'year');
                 var yearsList = (0, _dom.buildList)('ol', yearsAST, 'years');
-                (0, _dom.renderInNode)(daysViewNode, daysTable);
-                (0, _dom.renderInNode)(monthsViewNode, monthsList);
-                (0, _dom.renderInNode)(yearsViewNode, yearsList);
+                (0, _dom.renderInNode)(_daysViewNode, daysTable);
+                (0, _dom.renderInNode)(_monthsViewNode, monthsList);
+                (0, _dom.renderInNode)(_yearsViewNode, yearsList);
+            }
+            function updateInput(date) {
+                if (_inputNode.type === 'date') {
+                    _inputNode.value = date.toISOString().slice(0, 10);
+                } else if (_inputNode.type === 'text') {
+                    _inputNode.value = (0, _date.formatDate)(date);
+                }
             }
             function handleChange(e) {
-                var date = (0, _date.parseDate)(e.target.value, opts.format);
-                if (date && (0, _date.dateInRange)(date, opts._minDate, opts._maxDate)) {
-                    opts._selectedDate = date;
+                var date = (0, _date.parseDate)(e.target.value, _opts.format);
+                if (date && (0, _date.dateInRange)(date, _localOpts.minDate, _localOpts.maxDate)) {
+                    _localOpts.selectedDate = date;
                     updatePicker(date);
                 }
             }
+            function handleSelect(e) {
+                var value = e.target.dataset.value;
+                var type = e.target.dataset.type;
+                var tempDate = new Date(_localOpts.selectedDate);
+                if (!(value || type)) {
+                    return;
+                }
+                switch (type) {
+                case 'date':
+                    tempDate.setDate(value);
+                    break;
+                case 'month':
+                    tempDate.setMonth(value);
+                    break;
+                case 'year':
+                    tempDate.setFullYear(value);
+                    break;
+                }
+                var inRange = (0, _date.dateInRange)(tempDate, _localOpts.minDate, _localOpts.maxDate);
+                if (inRange) {
+                    _localOpts.selectedDate = tempDate;
+                    updateInput(tempDate);
+                    updatePicker(tempDate);
+                }
+            }
             function init() {
-                element.addEventListener('change', handleChange);
-                containerNode = element.querySelector(opts.containerSelector);
-                daysViewNode = containerNode.querySelector(opts.daysTargetSelector);
-                monthsViewNode = containerNode.querySelector(opts.monthsTargetSelector);
-                yearsViewNode = containerNode.querySelector(opts.yearsTargetSelector);
-                if (opts._selectedDate) {
-                    updatePicker(opts._selectedDate);
+                _opts = Object.assign(defaultOpts, options);
+                var dateNow = new Date();
+                _containerNode = element.querySelector(_opts.containerSelector);
+                _inputNode = element.querySelector(_opts.inputTargetSelector);
+                _daysViewNode = _containerNode.querySelector(_opts.daysTargetSelector);
+                _monthsViewNode = _containerNode.querySelector(_opts.monthsTargetSelector);
+                _yearsViewNode = _containerNode.querySelector(_opts.yearsTargetSelector);
+                element.addEventListener('input', handleChange);
+                _containerNode.addEventListener('click', handleSelect);
+                _localOpts = {
+                    value: _inputNode.value,
+                    maxDate: _inputNode.max ? new Date(_inputNode.max) : dateNow,
+                    minDate: _inputNode.min ? new Date(_inputNode.min) : new Date(0),
+                    selectedDate: _inputNode.value ? (0, _date.parseDate)(_inputNode.value, _opts.format) : undefined,
+                    useWeeks: true
+                };
+                _dateNames = (0, _i18n.getDateNames)(undefined, _opts.dateNamesFallback);
+                _dayNamesAST = _dateNames.days.map(function (item) {
+                    return (0, _transform.convertToAST)(item);
+                });
+                if (_localOpts.selectedDate) {
+                    updatePicker(_localOpts.selectedDate);
                 }
             }
             init();
         }
-        var input = document.querySelector('.date-input');
-        datepicker(input);
+        datepicker(document.querySelector('.date-input'));
     },
     function _1(module, exports) {
         'use strict';
@@ -145,6 +176,7 @@ var modules = [
         'use strict';
         Object.defineProperty(exports, '__esModule', { value: true });
         exports.parseDate = parseDate;
+        exports.formatDate = formatDate;
         exports.dateInRange = dateInRange;
         exports.getDaysPerMonth = getDaysPerMonth;
         exports.getDatesInMonth = getDatesInMonth;
@@ -175,6 +207,14 @@ var modules = [
                 break;
             }
             return validateDate(new Date(parts.join('-')));
+        }
+        function formatDate(date) {
+            var locale = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : navigator.language;
+            return date.toLocaleString(locale, {
+                year: 'numeric',
+                month: '2-digit',
+                day: '2-digit'
+            });
         }
         function compareDates(date1, date2) {
             return date1.getFullYear() === date2.getFullYear() && date1.getMonth() === date2.getMonth() && date1.getDate() === date2.getDate();
@@ -210,7 +250,8 @@ var modules = [
         function getMonthsInYear(months, selectedMonth) {
             return months.map(function (item, index) {
                 return {
-                    month: item,
+                    month: index,
+                    monthName: item,
                     selected: index === selectedMonth
                 };
             });
@@ -234,7 +275,7 @@ var modules = [
         exports.fillMonth = fillMonth;
         exports.assignState = assignState;
         exports.convertToAST = convertToAST;
-        exports.splitMonthInWeeks = splitMonthInWeeks;
+        exports.getWeeksOfMonth = getWeeksOfMonth;
         var _array = __paeckchen_require__(5).exports;
         function shiftDayIndex(dayIndex, shiftRule) {
             return shiftRule[dayIndex];
@@ -258,7 +299,7 @@ var modules = [
                 daysInNextMonth: daysInNextMonth
             };
         }
-        function assignState(list, childrenKey) {
+        function assignState(list, childrenKey, valueKey) {
             var items = list.map(function (val) {
                 if (!val) {
                     return;
@@ -267,7 +308,13 @@ var modules = [
                 val.current && className.push('current');
                 val.selected && className.push('selected');
                 val.disabled && className.push('disabled');
-                return convertToAST(val[childrenKey], { className: className });
+                return convertToAST(val[childrenKey], {
+                    className: className,
+                    data: {
+                        value: val[valueKey],
+                        type: valueKey
+                    }
+                });
             });
             return items;
         }
@@ -278,10 +325,18 @@ var modules = [
             var weeks = [];
             for (var i = weeksPerMonth - 1; i >= 0; i--) {
                 var daysInWeek = days.slice(daysPerWeek * i, daysPerWeek * (i + 1));
-                var dateNames = assignState(daysInWeek, 'date');
+                var dateNames = assignState(daysInWeek, 'date', 'date');
                 weeks.unshift(dateNames);
             }
             return weeks;
+        }
+        function getWeeksOfMonth(month, weeksPerMonth, daysPerWeek, useWeeks) {
+            var daysForMonths = [month.daysInMonth];
+            if (useWeeks) {
+                daysForMonths.unshift(month.daysInPreviousMonth);
+                daysForMonths.push(month.daysInNextMonth);
+            }
+            return splitMonthInWeeks([].concat.apply([], daysForMonths), weeksPerMonth, daysPerWeek);
         }
     },
     function _4(module, exports) {
@@ -302,6 +357,11 @@ var modules = [
             if (data.className) {
                 data.className.forEach(function (className) {
                     return node.classList.add(className);
+                });
+            }
+            if (data.data) {
+                Object.keys(data.data).forEach(function (item) {
+                    return node.dataset[item] = data.data[item];
                 });
             }
             return node;
