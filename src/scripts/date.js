@@ -45,6 +45,19 @@ export function parseDate(dateString, format) {
 }
 
 /**
+ * Format date according to given locale, fallback ISO timestring
+ *
+ * @param date Date
+ */
+export function formatDate(date, locale = navigator.language) {
+  return date.toLocaleString(locale, {
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit'
+  })
+}
+
+/**
  * Compare two dates
  *
  * @param   date1 Date    First date to compare to second one
@@ -137,7 +150,8 @@ export function getDatesInMonth(date, selectedDay, minDate, maxDate) {
 export function getMonthsInYear(months, selectedMonth) {
   return months.map((item, index) => {
     return {
-      month: item,
+      month: index,
+      monthName: item,
       selected: index === selectedMonth
     };
   });
