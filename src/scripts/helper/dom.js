@@ -24,7 +24,13 @@ function extendNode(node, data) {
 
   if (data.className) {
     data.className.forEach(
-      (className) => node.classList.add(className)
+      className => node.classList.add(className)
+    );
+  }
+
+  if (data.data) {
+    Object.keys(data.data).forEach(
+      item => node.dataset[item] = data.data[item]
     );
   }
 

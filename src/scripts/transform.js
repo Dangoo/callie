@@ -49,7 +49,7 @@ export function fillMonth(daysInMonth, weeksPerMonth, daysPerWeek) {
   };
 }
 
-export function assignState(list, childrenKey) {
+export function assignState(list, childrenKey, valueKey) {
   const items = list.map((val) => {
     if (!val) {
       return;
@@ -63,7 +63,11 @@ export function assignState(list, childrenKey) {
     return convertToAST(
       val[childrenKey],
       {
-        className
+        className,
+        data: {
+          value: val[valueKey],
+          type: valueKey
+        }
       }
     );
   });
@@ -77,17 +81,33 @@ export function convertToAST(children, attrs) {
   }, attrs)
 }
 
-export function splitMonthInWeeks(days, weeksPerMonth, daysPerWeek) {
+function splitMonthInWeeks(days, weeksPerMonth, daysPerWeek) {
   const weeks = [];
 
 
   for (var i = weeksPerMonth - 1; i >= 0; i--) {
     const daysInWeek = days.slice(daysPerWeek * i, daysPerWeek * (i + 1));
-    const dateNames = assignState(daysInWeek, 'date');
+    const dateNames = assignState(daysInWeek, 'date', 'date');
 
     weeks.unshift(dateNames);
   }
 
   return weeks;
+}
+
+export function getWeeksOfMonth(month, weeksPerMonth, daysPerWeek, useWeeks) {
+
+  const daysForMonths = [month.daysInMonth];
+
+  if (useWeeks) {
+    daysForMonths.unshift(month.daysInPreviousMonth);
+    daysForMonths.push(month.daysInNextMonth);
+  }
+
+  return splitMonthInWeeks(
+    [].concat.apply([], daysForMonths),
+    weeksPerMonth,
+    daysPerWeek
+  );
 }
 
