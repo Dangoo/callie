@@ -49,16 +49,16 @@ export function fillMonth(daysInMonth, weeksPerMonth, daysPerWeek) {
   };
 }
 
-export function assignState(list, childrenKey, valueKey) {
-  const items = list.map((val) => {
+export function assignState(list, childrenKey, valueKey, stateClassNames) {
+  return list.map((val) => {
     if (!val) {
       return;
     }
 
     const className = [];
-    val.current && className.push('current');
-    val.selected && className.push('selected');
-    val.disabled && className.push('disabled');
+    val.current && className.push(stateClassNames.current);
+    val.selected && className.push(stateClassNames.selected);
+    val.disabled && className.push(stateClassNames.disabled);
 
     return convertToAST(
       val[childrenKey],
@@ -71,8 +71,6 @@ export function assignState(list, childrenKey, valueKey) {
       }
     );
   });
-
-  return items;
 }
 
 export function convertToAST(children, attrs) {
@@ -81,13 +79,13 @@ export function convertToAST(children, attrs) {
   }, attrs)
 }
 
-function splitMonthInWeeks(days, weeksPerMonth, daysPerWeek) {
+function splitMonthInWeeks(days, weeksPerMonth, daysPerWeek, stateClassNames) {
   const weeks = [];
 
 
   for (var i = weeksPerMonth - 1; i >= 0; i--) {
     const daysInWeek = days.slice(daysPerWeek * i, daysPerWeek * (i + 1));
-    const dateNames = assignState(daysInWeek, 'date', 'date');
+    const dateNames = assignState(daysInWeek, 'date', 'date', stateClassNames);
 
     weeks.unshift(dateNames);
   }
@@ -95,7 +93,13 @@ function splitMonthInWeeks(days, weeksPerMonth, daysPerWeek) {
   return weeks;
 }
 
-export function getWeeksOfMonth(month, weeksPerMonth, daysPerWeek, useWeeks) {
+export function getWeeksOfMonth(
+  month,
+  weeksPerMonth,
+  daysPerWeek,
+  useWeeks,
+  stateClassNames
+) {
 
   const daysForMonths = [month.daysInMonth];
 
@@ -107,7 +111,8 @@ export function getWeeksOfMonth(month, weeksPerMonth, daysPerWeek, useWeeks) {
   return splitMonthInWeeks(
     [].concat.apply([], daysForMonths),
     weeksPerMonth,
-    daysPerWeek
+    daysPerWeek,
+    stateClassNames
   );
 }
 

@@ -234,27 +234,20 @@ input::-webkit-calendar-picker-indicator{
   max-height: 100%;
   width: 100%;
 }
-.date-input__view-days td:not(.disabled),
+.date-input__view-days td:not(.date-input__item--disabled),
 .date-input__view-months ol > li,
 .date-input__view-years ol > li {
   cursor: pointer;
 }
-.date-input__view-days .current,
-.date-input__view-months .current,
-.date-input__view-years .current,
-.date-input__view-days .selected,
-.date-input__view-months .selected,
-.date-input__view-years .selected {
+.date-input__item--current,
+.date-input__item--selected {
   font-weight: bold;
 }
-.date-input__view-days .disabled,
-.date-input__view-months .disabled {
+.date-input__item--disabled {
   color: #ccc;
   cursor: not-allowed;
 }
-.date-input__view-days .selected::before,
-.date-input__view-months .selected::before,
-.date-input__view-years .selected::before {
+.date-input__item--selected::before {
   content: '';
   display: block;
   position: absolute;
@@ -263,12 +256,12 @@ input::-webkit-calendar-picker-indicator{
   left: 0;
   border: 0 solid #4090ff;
 }
-.date-input__view-days .selected::before {
+.date-input__view-days .date-input__item--selected::before {
   right: 0;
   border-width: 3px;
 }
-.date-input__view-months .selected::before,
-.date-input__view-years .selected::before {
+.date-input__view-months .date-input__item--selected::before,
+.date-input__view-years .date-input__item--selected::before {
   border-left-width: 3px;
 }
 html {

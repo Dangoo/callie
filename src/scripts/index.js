@@ -29,6 +29,7 @@ export default function datepicker(element, options) {
   let _localOpts;
   let _dateNames;
   let _dayNamesAST;
+  let _stateClassNames;
 
   const defaultOpts = {
     weeksPerMonth: 6,
@@ -38,6 +39,9 @@ export default function datepicker(element, options) {
     monthsTargetSelector: '[data-role=months]',
     yearsTargetSelector: '[data-role=years]',
     inputTargetSelector: '[data-role=input]',
+    selectedStateClassName: 'date-input__item--selected',
+    currentStateClassName: 'date-input__item--current',
+    disabledStateClassName: 'date-input__item--disabled',
     format: 'dd.mm.yyyy',
     dateNamesFallback: {
       days: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
@@ -66,7 +70,8 @@ export default function datepicker(element, options) {
         month,
         _opts.weeksPerMonth,
         _opts.daysPerWeek,
-        _localOpts.useWeeks
+        _localOpts.useWeeks,
+        _stateClassNames
       )
     );
 
@@ -78,7 +83,8 @@ export default function datepicker(element, options) {
         _localOpts.maxDate
       ),
       'monthName',
-      'month'
+      'month',
+      _stateClassNames
     );
 
     const monthsList = buildList('ol', monthsAST, 'month');
@@ -90,7 +96,8 @@ export default function datepicker(element, options) {
         _localOpts.selectedDate.getFullYear()
       ),
       'year',
-      'year'
+      'year',
+      _stateClassNames
     );
 
     const yearsList = buildList('ol', yearsAST, 'years');
@@ -169,6 +176,12 @@ export default function datepicker(element, options) {
     _daysViewNode = _containerNode.querySelector(_opts.daysTargetSelector);
     _monthsViewNode = _containerNode.querySelector(_opts.monthsTargetSelector);
     _yearsViewNode = _containerNode.querySelector(_opts.yearsTargetSelector);
+
+    _stateClassNames = {
+      current: _opts.currentStateClassName,
+      selected: _opts.selectedStateClassName,
+      disabled: _opts.disabledStateClassName
+    };
 
     element.addEventListener('input', handleChange);
     _containerNode.addEventListener('click', handleSelect);

@@ -25,6 +25,7 @@ var modules = [
             var _localOpts = void 0;
             var _dateNames = void 0;
             var _dayNamesAST = void 0;
+            var _stateClassNames = void 0;
             var defaultOpts = {
                 weeksPerMonth: 6,
                 daysPerWeek: 7,
@@ -33,6 +34,9 @@ var modules = [
                 monthsTargetSelector: '[data-role=months]',
                 yearsTargetSelector: '[data-role=years]',
                 inputTargetSelector: '[data-role=input]',
+                selectedStateClassName: 'date-input__item--selected',
+                currentStateClassName: 'date-input__item--current',
+                disabledStateClassName: 'date-input__item--disabled',
                 format: 'dd.mm.yyyy',
                 dateNamesFallback: {
                     days: [
@@ -63,10 +67,10 @@ var modules = [
             function updatePicker(date) {
                 var datesInMonth = (0, _date.getDatesInMonth)(date, _localOpts.selectedDate.getDate(), _localOpts.minDate, _localOpts.maxDate);
                 var month = (0, _transform.fillMonth)(datesInMonth, _opts.weeksPerMonth, _opts.daysPerWeek);
-                var daysTable = (0, _dom.buildTable)(_localOpts.useWeeks ? _dayNamesAST : null, (0, _transform.getWeeksOfMonth)(month, _opts.weeksPerMonth, _opts.daysPerWeek, _localOpts.useWeeks));
-                var monthsAST = (0, _transform.assignState)((0, _date.getMonthsInYear)(_dateNames.months, _localOpts.selectedDate, _localOpts.minDate, _localOpts.maxDate), 'monthName', 'month');
+                var daysTable = (0, _dom.buildTable)(_localOpts.useWeeks ? _dayNamesAST : null, (0, _transform.getWeeksOfMonth)(month, _opts.weeksPerMonth, _opts.daysPerWeek, _localOpts.useWeeks, _stateClassNames));
+                var monthsAST = (0, _transform.assignState)((0, _date.getMonthsInYear)(_dateNames.months, _localOpts.selectedDate, _localOpts.minDate, _localOpts.maxDate), 'monthName', 'month', _stateClassNames);
                 var monthsList = (0, _dom.buildList)('ol', monthsAST, 'month');
-                var yearsAST = (0, _transform.assignState)((0, _date.getYears)(_localOpts.minDate.getFullYear(), _localOpts.maxDate.getFullYear(), _localOpts.selectedDate.getFullYear()), 'year', 'year');
+                var yearsAST = (0, _transform.assignState)((0, _date.getYears)(_localOpts.minDate.getFullYear(), _localOpts.maxDate.getFullYear(), _localOpts.selectedDate.getFullYear()), 'year', 'year', _stateClassNames);
                 var yearsList = (0, _dom.buildList)('ol', yearsAST, 'years');
                 (0, _dom.renderInNode)(_daysViewNode, daysTable);
                 (0, _dom.renderInNode)(_monthsViewNode, monthsList);
@@ -119,6 +123,11 @@ var modules = [
                 _daysViewNode = _containerNode.querySelector(_opts.daysTargetSelector);
                 _monthsViewNode = _containerNode.querySelector(_opts.monthsTargetSelector);
                 _yearsViewNode = _containerNode.querySelector(_opts.yearsTargetSelector);
+                _stateClassNames = {
+                    current: _opts.currentStateClassName,
+                    selected: _opts.selectedStateClassName,
+                    disabled: _opts.disabledStateClassName
+                };
                 element.addEventListener('input', handleChange);
                 _containerNode.addEventListener('click', handleSelect);
                 _localOpts = {
@@ -302,15 +311,15 @@ var modules = [
                 daysInNextMonth: daysInNextMonth
             };
         }
-        function assignState(list, childrenKey, valueKey) {
-            var items = list.map(function (val) {
+        function assignState(list, childrenKey, valueKey, stateClassNames) {
+            return list.map(function (val) {
                 if (!val) {
                     return;
                 }
                 var className = [];
-                val.current && className.push('current');
-                val.selected && className.push('selected');
-                val.disabled && className.push('disabled');
+                val.current && className.push(stateClassNames.current);
+                val.selected && className.push(stateClassNames.selected);
+                val.disabled && className.push(stateClassNames.disabled);
                 return convertToAST(val[childrenKey], {
                     className: className,
                     data: {
@@ -319,27 +328,26 @@ var modules = [
                     }
                 });
             });
-            return items;
         }
         function convertToAST(children, attrs) {
             return Object.assign({ children: children }, attrs);
         }
-        function splitMonthInWeeks(days, weeksPerMonth, daysPerWeek) {
+        function splitMonthInWeeks(days, weeksPerMonth, daysPerWeek, stateClassNames) {
             var weeks = [];
             for (var i = weeksPerMonth - 1; i >= 0; i--) {
                 var daysInWeek = days.slice(daysPerWeek * i, daysPerWeek * (i + 1));
-                var dateNames = assignState(daysInWeek, 'date', 'date');
+                var dateNames = assignState(daysInWeek, 'date', 'date', stateClassNames);
                 weeks.unshift(dateNames);
             }
             return weeks;
         }
-        function getWeeksOfMonth(month, weeksPerMonth, daysPerWeek, useWeeks) {
+        function getWeeksOfMonth(month, weeksPerMonth, daysPerWeek, useWeeks, stateClassNames) {
             var daysForMonths = [month.daysInMonth];
             if (useWeeks) {
                 daysForMonths.unshift(month.daysInPreviousMonth);
                 daysForMonths.push(month.daysInNextMonth);
             }
-            return splitMonthInWeeks([].concat.apply([], daysForMonths), weeksPerMonth, daysPerWeek);
+            return splitMonthInWeeks([].concat.apply([], daysForMonths), weeksPerMonth, daysPerWeek, stateClassNames);
         }
     },
     function _4(module, exports) {
