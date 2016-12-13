@@ -71,7 +71,12 @@ export default function datepicker(element, options) {
     );
 
     const monthsAST = assignState(
-      getMonthsInYear(_dateNames.months, _localOpts.selectedDate.getMonth()),
+      getMonthsInYear(
+        _dateNames.months,
+        _localOpts.selectedDate,
+        _localOpts.minDate,
+        _localOpts.maxDate
+      ),
       'monthName',
       'month'
     );

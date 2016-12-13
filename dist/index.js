@@ -64,7 +64,7 @@ var modules = [
                 var datesInMonth = (0, _date.getDatesInMonth)(date, _localOpts.selectedDate.getDate(), _localOpts.minDate, _localOpts.maxDate);
                 var month = (0, _transform.fillMonth)(datesInMonth, _opts.weeksPerMonth, _opts.daysPerWeek);
                 var daysTable = (0, _dom.buildTable)(_localOpts.useWeeks ? _dayNamesAST : null, (0, _transform.getWeeksOfMonth)(month, _opts.weeksPerMonth, _opts.daysPerWeek, _localOpts.useWeeks));
-                var monthsAST = (0, _transform.assignState)((0, _date.getMonthsInYear)(_dateNames.months, _localOpts.selectedDate.getMonth()), 'monthName', 'month');
+                var monthsAST = (0, _transform.assignState)((0, _date.getMonthsInYear)(_dateNames.months, _localOpts.selectedDate, _localOpts.minDate, _localOpts.maxDate), 'monthName', 'month');
                 var monthsList = (0, _dom.buildList)('ol', monthsAST, 'month');
                 var yearsAST = (0, _transform.assignState)((0, _date.getYears)(_localOpts.minDate.getFullYear(), _localOpts.maxDate.getFullYear(), _localOpts.selectedDate.getFullYear()), 'year', 'year');
                 var yearsList = (0, _dom.buildList)('ol', yearsAST, 'years');
@@ -242,17 +242,19 @@ var modules = [
                     day: tempDate.getDay(),
                     current: compareDates(actualDate, new Date()),
                     selected: tempDate.getDate() === selectedDay,
-                    disabled: tempDate.getTime() < minDate.getTime() || tempDate.getTime() > maxDate.getTime()
+                    disabled: !dateInRange(tempDate, minDate, maxDate)
                 });
             }
             return datesInMonth;
         }
-        function getMonthsInYear(months, selectedMonth) {
+        function getMonthsInYear(months, selectedDate, minDate, maxDate) {
             return months.map(function (item, index) {
                 return {
                     month: index,
                     monthName: item,
-                    selected: index === selectedMonth
+                    selected: index === selectedDate.getMonth(),
+                    current: index === new Date().getMonth(),
+                    disabled: !dateInRange(new Date(selectedDate.getFullYear(), index), minDate, maxDate)
                 };
             });
         }
@@ -263,7 +265,8 @@ var modules = [
                 var year = yearFrom + i;
                 years.push({
                     year: year,
-                    selected: year === selectedYear
+                    selected: year === selectedYear,
+                    current: year === new Date().getFullYear()
                 });
             }
             return years;

@@ -240,6 +240,8 @@ input::-webkit-calendar-picker-indicator{
   cursor: pointer;
 }
 .date-input__view-days .current,
+.date-input__view-months .current,
+.date-input__view-years .current,
 .date-input__view-days .selected,
 .date-input__view-months .selected,
 .date-input__view-years .selected {

@@ -47,7 +47,10 @@ export function parseDate(dateString, format) {
 /**
  * Format date according to given locale, fallback ISO timestring
  *
- * @param date Date
+ * @param   date   Date   Date to be formatted
+ * @param   locale String Locale to convert date according to
+ *
+ * @returns        Date
  */
 export function formatDate(date, locale = navigator.language) {
   return date.toLocaleString(locale, {
@@ -113,6 +116,8 @@ export function getDaysPerMonth(date) {
  *
  * @param   date        Date   Date of wich month to calculate days of
  * @param   selectedDay Number Integer of selected day
+ * @param   minDate     Date   Minimal allowed date
+ * @param   maxDate     Date   Maximal allowed date
  *
  * @returns             Object List of dates in current month
  */
@@ -130,9 +135,7 @@ export function getDatesInMonth(date, selectedDay, minDate, maxDate) {
       day: tempDate.getDay(),
       current: compareDates(actualDate, new Date()),
       selected: tempDate.getDate() === selectedDay,
-      disabled:
-        (tempDate.getTime() < minDate.getTime()) ||
-        (tempDate.getTime() > maxDate.getTime())
+      disabled: !dateInRange(tempDate, minDate, maxDate)
     });
   }
 
@@ -144,19 +147,32 @@ export function getDatesInMonth(date, selectedDay, minDate, maxDate) {
  *
  * @param   months        Array  List of months
  * @param   selectedMonth Number Integer of selected month
+ * @param   minDate       Date   Minimal allowed date
+ * @param   maxDate       Date   Maximal allowed date
  *
  * @returns               Object List of months in year
  */
-export function getMonthsInYear(months, selectedMonth) {
+export function getMonthsInYear(months, selectedDate, minDate, maxDate) {
   return months.map((item, index) => {
     return {
       month: index,
       monthName: item,
-      selected: index === selectedMonth
+      selected: index === selectedDate.getMonth(),
+      current: index === new Date().getMonth(),
+      disabled: !dateInRange(new Date(selectedDate.getFullYear(), index), minDate, maxDate)
     };
   });
 }
 
+/**
+ * getYears
+ *
+ * @param   yearFrom      Number Year to count from
+ * @param   yearTo        Number Year to count to
+ * @param   selectedYear  Number Integer of selected year
+ *
+ * @returns               Object List of months in year
+ */
 export function getYears(yearFrom, yearTo, selectedYear) {
   const delta = Math.abs(yearTo - yearFrom);
   const years = [];
@@ -165,7 +181,8 @@ export function getYears(yearFrom, yearTo, selectedYear) {
     const year = yearFrom + i;
     years.push({
       year,
-      selected: year === selectedYear
+      selected: year === selectedYear,
+      current: year === new Date().getFullYear()
     });
   }
 
