@@ -19,7 +19,7 @@ import {
   renderInNode
 } from './helper/dom';
 
-export default function datepicker(element, options) {
+export default function callie(element, options) {
   let _inputNode;
   let _containerNode;
   let _daysViewNode;
@@ -206,5 +206,3 @@ export default function datepicker(element, options) {
 
   init();
 }
-
-datepicker(document.querySelector('.date-input'));

@@ -44,6 +44,17 @@
     </div>
   </div>
   <script src="index.js"></script>
+  <script>
+    // Please don't try this at home!
+    window.callie = __paeckchen_require__(0).exports.default;
+
+    // Initialize datepicker
+    callie(document.querySelector('.date-input'), {
+      'selectedStateClassName': 'date-input__item--selected',
+      'currentStateClassName': 'date-input__item--current',
+      'disabledStateClassName': 'date-input__item--disabled'
+    });
+  </script>
 </body>
 
 </html>
