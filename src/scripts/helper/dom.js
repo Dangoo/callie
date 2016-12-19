@@ -96,7 +96,9 @@ export function buildTable(headData, bodyData, footData) {
 	  const tbody = document.createElement('tbody');
     if (bodyData.length) {
       bodyData.forEach((data) => {
-        tbody.appendChild(buildTableRow(data, 'td'));
+        if (data.length) {
+          tbody.appendChild(buildTableRow(data, 'td'));
+        }
       });
     }
     tableNode.appendChild(tbody);

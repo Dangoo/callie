@@ -36,10 +36,10 @@ export function fillMonth(daysInMonth, weeksPerMonth, daysPerWeek) {
   // for display with monday as first day of week
   if (deltaToPrevMonth > 0) {
     daysInPreviousMonth = getDummyArray(firstDayIndex, null);
+  }
 
-    if (deltaToNextMonth <= weeksPerMonth) {
-      daysInNextMonth = getDummyArray(deltaToNextMonth, null);
-    }
+  if (deltaToNextMonth > 0) {
+    daysInNextMonth = getDummyArray(deltaToNextMonth, null);
   }
 
   return {

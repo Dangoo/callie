@@ -301,9 +301,9 @@ var modules = [
             var daysInNextMonth = [];
             if (deltaToPrevMonth > 0) {
                 daysInPreviousMonth = (0, _array.getDummyArray)(firstDayIndex, null);
-                if (deltaToNextMonth <= weeksPerMonth) {
-                    daysInNextMonth = (0, _array.getDummyArray)(deltaToNextMonth, null);
-                }
+            }
+            if (deltaToNextMonth > 0) {
+                daysInNextMonth = (0, _array.getDummyArray)(deltaToNextMonth, null);
             }
             return {
                 daysInPreviousMonth: daysInPreviousMonth,
@@ -402,7 +402,9 @@ var modules = [
                     var tbody = document.createElement('tbody');
                     if (bodyData.length) {
                         bodyData.forEach(function (data) {
-                            tbody.appendChild(buildTableRow(data, 'td'));
+                            if (data.length) {
+                                tbody.appendChild(buildTableRow(data, 'td'));
+                            }
                         });
                     }
                     tableNode.appendChild(tbody);
