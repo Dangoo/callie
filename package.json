@@ -1,11 +1,12 @@
 {
   "name": "callie",
   "version": "0.1.0",
-  "description": "",
+  "description": "Lightweight modular datepicker",
   "main": "src/index.js",
   "scripts": {
     "build": "gulp",
-    "watch": "gulp watch"
+    "watch": "gulp watch",
+    "postinstall": "npm run build"
   },
   "author": {
     "name": "Daniel Gooß"
@@ -21,10 +22,11 @@
   "devDependencies": {
     "babel-preset-es2015": "^6.18.0",
     "gulp": "^3.9.1",
-    "gulp-babel": "^6.1.2",
-    "gulp-paeckchen": "^0.1.1",
     "gulp-postcss": "^6.2.0",
     "postcss-cssnext": "^2.9.0",
-    "postcss-import": "^8.2.0"
+    "postcss-import": "^8.2.0",
+    "rollup-plugin-babel": "^2.7.1",
+    "rollup-stream": "^1.14.0",
+    "vinyl-source-stream": "^1.1.0"
   }
 }
