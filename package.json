@@ -1,12 +1,12 @@
 {
   "name": "callie",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "Lightweight modular datepicker",
   "main": "src/index.js",
   "scripts": {
     "build": "gulp",
     "watch": "gulp watch",
-    "postinstall": "npm run build"
+    "prepublish": "npm run build"
   },
   "author": {
     "name": "Daniel Gooß"
