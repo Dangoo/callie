@@ -14,6 +14,7 @@ const banner = `/**
 * ${pkg.name} - ${pkg.description}
 * @version v${pkg.version}
 * @license ${pkg.license}
+* @repository ${pkg.repository.url}
 */
 `;
 

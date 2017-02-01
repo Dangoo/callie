@@ -8,7 +8,13 @@
  */
 export function getShiftedArray(length, shiftBy) {
   // Create new array and use keys as items
-  const items = [...Array(length).keys()];
+  // const items = [...Array(length).keys()]; // Temporarely disabled due to IE11 not supporting
+  const items = [];
+
+  for (let i = 0; i < length; i++) {
+    items.push(i)
+  }
+
   // Remove n last items and insert at the beginning
   return items.splice(-shiftBy).concat(items);
 }
