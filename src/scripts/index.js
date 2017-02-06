@@ -1,4 +1,5 @@
 import { getDateNames } from './helper/i18n';
+import { isTouch } from './helper/touch';
 import {
   parseDate,
   formatDate,
@@ -21,6 +22,7 @@ import {
 
 export default function callie(element, options) {
   let _inputNode;
+  let _containerStateNode;
   let _containerNode;
   let _daysViewNode;
   let _monthsViewNode;
@@ -34,6 +36,7 @@ export default function callie(element, options) {
   const defaultOpts = {
     weeksPerMonth: 6,
     daysPerWeek: 7,
+    containerStateSelector: '[data-role=ui-state]',
     containerSelector: '[data-role=container]',
     daysTargetSelector: '[data-role=days]',
     monthsTargetSelector: '[data-role=months]',
@@ -43,6 +46,7 @@ export default function callie(element, options) {
     currentStateClassName: 'date-input__item--current',
     disabledStateClassName: 'date-input__item--disabled',
     format: 'dd.mm.yyyy',
+    noTouch: false,
     dateNamesFallback: {
       days: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
       months: ['January', 'February', 'March', 'April', 'Mai', 'June', 'July', 'August', 'September', 'October', 'November', 'December']
@@ -163,6 +167,25 @@ export default function callie(element, options) {
     }
   }
 
+  /**
+   * Set type of input to text to solve inconsistencies between
+   * Chrome (with date format support) and other browsers
+   *
+   * @param forceText Boolean
+   */
+  function toggleType(forceText) {
+    const type = (_localOpts.noTouch || forceText) ?
+      'text' : 'date';
+
+    _inputNode.type = type;
+
+    updateInput(_localOpts.selectedDate);
+  }
+
+  function toggleActive(active) {
+    _containerStateNode.checked = active || !_containerStateNode.checked;
+  }
+
   function init() {
     _opts = Object.assign(
       defaultOpts,
@@ -171,20 +194,12 @@ export default function callie(element, options) {
 
     const dateNow = new Date();
 
+    _containerStateNode = element.querySelector(_opts.containerStateSelector);
     _containerNode = element.querySelector(_opts.containerSelector);
     _inputNode = element.querySelector(_opts.inputTargetSelector);
     _daysViewNode = _containerNode.querySelector(_opts.daysTargetSelector);
     _monthsViewNode = _containerNode.querySelector(_opts.monthsTargetSelector);
     _yearsViewNode = _containerNode.querySelector(_opts.yearsTargetSelector);
-
-    _stateClassNames = {
-      current: _opts.currentStateClassName,
-      selected: _opts.selectedStateClassName,
-      disabled: _opts.disabledStateClassName
-    };
-
-    element.addEventListener('input', handleChange);
-    _containerNode.addEventListener('click', handleSelect);
 
     _localOpts = {
       value: _inputNode.value,
@@ -193,14 +208,31 @@ export default function callie(element, options) {
       selectedDate: _inputNode.value ?
         parseDate(_inputNode.value, _opts.format) :
         undefined,
-      useWeeks: true
+      useWeeks: true,
+      noTouch: _opts.noTouch || !isTouch()
     };
 
-    _dateNames = getDateNames(undefined, _opts.dateNamesFallback);
-    _dayNamesAST = _dateNames.days.map((item) => convertToAST(item));
 
-    if (_localOpts.selectedDate) {
-      updatePicker(_localOpts.selectedDate);
+    // Use datepicker only on non-touchscreens
+    if (_localOpts.noTouch) {
+      _stateClassNames = {
+        current: _opts.currentStateClassName,
+        selected: _opts.selectedStateClassName,
+        disabled: _opts.disabledStateClassName
+      };
+
+      element.addEventListener('input', handleChange);
+      _containerNode.addEventListener('click', handleSelect);
+
+      toggleType();
+      toggleActive();
+
+      _dateNames = getDateNames(undefined, _opts.dateNamesFallback);
+      _dayNamesAST = _dateNames.days.map((item) => convertToAST(item));
+
+      if (_localOpts.selectedDate) {
+        updatePicker(_localOpts.selectedDate);
+      }
     }
   }
 

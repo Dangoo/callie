@@ -1,6 +1,7 @@
 @import '_vars';
 
-.date-input [data-role=state] {
+.date-input [data-role=state],
+.date-input [data-role=ui-state] {
   position: absolute;
   width: 0;
   height: 0;
@@ -10,10 +11,15 @@
 }
 
 .date-input__container {
+  display: none;
   position: absolute;
   padding: 1rem;
   border: 1px solid var(--border-color);
   box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+.date-input [data-role=ui-state]:checked ~ .date-input__container {
+  display: block;
 }
 
 .date-input__nav {
