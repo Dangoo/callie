@@ -1,7 +1,7 @@
 // Imports methods and exposes them as public API e.g. datepickerAPI.getDatesNames()
 
 export { getDateNames } from './helper/i18n';
-import { isTouch } from './helper/touch';
+export { isTouch } from './helper/touch';
 export {
   parseDate,
   formatDate,
