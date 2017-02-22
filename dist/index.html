@@ -49,11 +49,7 @@
   <script src="index.js"></script>
   <script>
     // Initialize datepicker
-    callie(document.querySelector('.date-input'), {
-      'selectedStateClassName': 'date-input__item--selected',
-      'currentStateClassName': 'date-input__item--current',
-      'disabledStateClassName': 'date-input__item--disabled'
-    });
+    var pickerInstance = callie(document.querySelector('.date-input'), {});
   </script>
 </body>
 
