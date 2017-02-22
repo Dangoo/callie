@@ -34,6 +34,9 @@ export default function callie(element, options) {
     }
   };
 
+  /**
+   * @param {Date} date
+   */
   function updatePicker(date) {
     const datesInMonth = lib.getDatesInMonth(
       date,
@@ -91,6 +94,9 @@ export default function callie(element, options) {
     lib.renderInNode(_yearsViewNode, yearsList);
   }
 
+  /**
+   * @param {Date} date
+   */
   function updateInput(date) {
     if (_inputNode.type === 'date') {
       _inputNode.value = date.toISOString().slice(0, 10);
@@ -99,8 +105,34 @@ export default function callie(element, options) {
     }
   }
 
-  function handleChange(e) {
-    const date = lib.parseDate(e.target.value, _opts.format);
+  /**
+   * Set the date of the input and update datepicker
+   *
+   * @param  {Date}    date - New date to update to
+   * @return {boolean}
+   */
+  function setDate(date) {
+    const inRange = lib.dateInRange(
+      date,
+      _localOpts.minDate,
+      _localOpts.maxDate
+    );
+
+    if (inRange) {
+      _localOpts.selectedDate = date;
+
+      updateInput(date);
+      updatePicker(date);
+    }
+
+    return inRange;
+  }
+
+  /**
+   * @param {Object} event
+   */
+  function handleChange(event) {
+    const date = lib.parseDate(event.target.value, _opts.format);
 
     if (
       date &&
@@ -112,9 +144,12 @@ export default function callie(element, options) {
     }
   }
 
-  function handleSelect(e) {
-    const value = e.target.dataset.value;
-    const type = e.target.dataset.type;
+  /**
+   * @param {Object} event
+   */
+  function handleSelect(event) {
+    const value = event.target.dataset.value;
+    const type = event.target.dataset.type;
     const tempDate = new Date(_localOpts.selectedDate);
 
     if (!(value || type)) {
@@ -133,20 +168,12 @@ export default function callie(element, options) {
         break;
     }
 
-    const inRange = lib.dateInRange(
-      tempDate,
-      _localOpts.minDate,
-      _localOpts.maxDate
-    );
-
-    if (inRange) {
-      _localOpts.selectedDate = tempDate;
-
-      updateInput(tempDate);
-      updatePicker(tempDate);
-    }
+    setDate(tempDate);
   }
 
+  /**
+   * @param {Object} event
+   */
   function handlePickerToggle(event) {
     if (event.type === 'focus') {
       _localOpts.isOpen = true;
@@ -159,15 +186,18 @@ export default function callie(element, options) {
     toggleStateNode(_localOpts.isOpen);
   }
 
+  /**
+   * @param {Object} event
+   */
   function handleLocalClick(event) {
     _localOpts.localClick = event.type === 'mousedown';
   }
 
   /**
    * Set type of input to text to solve inconsistencies between
-   * Chrome (with date format support) and other browsers
+   * desktop Chrome, soon Firefox (with date format support) and other browsers
    *
-   * @param forceText Boolean
+   * @param {boolean} forceText
    */
   function toggleType(forceText) {
     const type = (_localOpts.noTouch || forceText) ?
@@ -178,8 +208,11 @@ export default function callie(element, options) {
     updateInput(_localOpts.selectedDate);
   }
 
-  function toggleStateNode(active) {
-    _containerStateNode.checked = active || !_containerStateNode.checked;
+  /**
+   * @param {boolean} checked
+   */
+  function toggleStateNode(checked) {
+    _containerStateNode.checked = checked || !_containerStateNode.checked;
   }
 
   function init() {
@@ -210,7 +243,6 @@ export default function callie(element, options) {
       localClick: false
     };
 
-
     // Use datepicker only on non-touchscreens
     if (_localOpts.noTouch) {
       _stateClassNames = {
@@ -236,7 +268,13 @@ export default function callie(element, options) {
       _inputNode.addEventListener('focus', handlePickerToggle);
       _inputNode.addEventListener('blur', handlePickerToggle);
     }
+
+    // Expose API
+    return {
+      setDate,
+      getDate: () => _localOpts.selectedDate
+    }
   }
 
-  init();
+  return init();
 }
