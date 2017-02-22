@@ -10,14 +10,25 @@
   visibility: hidden;
 }
 
+.date-input__catcher {
+  display: none;
+  position: fixed;
+  cursor: auto;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  top: 0;
+}
+
 .date-input__container {
   display: none;
   position: absolute;
-  padding: 1rem;
+  padding: .75rem;
   border: 1px solid var(--border-color);
   box-shadow: 0 2px 5px rgba(0,0,0,0.1);
 }
 
+.date-input [data-role=ui-state]:checked ~ .date-input__catcher,
 .date-input [data-role=ui-state]:checked ~ .date-input__container {
   display: block;
 }
@@ -102,7 +113,7 @@
 }
 
 /**
- * Styles
+ * Modes
  *
  * @mod slide Views slide in and out like a slideshow
  * @mod fade  Views fade over

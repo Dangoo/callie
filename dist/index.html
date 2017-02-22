@@ -3,13 +3,14 @@
 
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Document</title>
   <link rel="stylesheet" href="index.css">
 </head>
 
 <body>
   <div class="date-input date-input--slide">
-    <input type="checkbox" data-role="ui-state">
+    <input type="checkbox" data-role="ui-state" id="date-input-01__ui-state">
     <input
       type="date"
       data-role="input"
@@ -20,6 +21,7 @@
       min="1950-10-03"
       value="1970-01-01"
     />
+    <label class="date-input__catcher" for="date-input-01__ui-state"></label>
     <div class="date-input__container" data-role="container">
       <input type="radio" name="date" data-role="state" id="trigger_days" checked>
       <input type="radio" name="date" data-role="state" id="trigger_months">
