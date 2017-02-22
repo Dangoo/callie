@@ -12,3 +12,7 @@ body::after,
 body * {
   box-sizing: inherit;
 }
+
+input {
+  font: inherit;
+}
