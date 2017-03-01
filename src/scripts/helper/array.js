@@ -9,11 +9,7 @@
 export function getShiftedArray(length, shiftBy) {
   // Create new array and use keys as items
   // const items = [...Array(length).keys()]; // Temporarely disabled due to IE11 not supporting
-  const items = [];
-
-  for (let i = 0; i < length; i++) {
-    items.push(i)
-  }
+  const items = getDummyArray(length);
 
   // Remove n last items and insert at the beginning
   return items.splice(-shiftBy).concat(items);
@@ -23,14 +19,14 @@ export function getShiftedArray(length, shiftBy) {
  * Creates array with n entries and value as passed
  *
  * @param   n     Number Number of items in array
- * @param   value any    Value of each item, default null
+ * @param   value any    Value of each item
  * @returns       Array
  */
-export function getDummyArray(n, value = null) {
+export function getDummyArray(n, value) {
   const a = [];
 
   for (var i = n; i > 0; i--) {
-    a.push(value);
+    a.push(typeof value !== 'undefined' ? value : i);
   }
 
   return a;
