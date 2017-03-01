@@ -1,13 +1,14 @@
 # &#x1f4c5; Callie
 
-<div style="padding: 1em; background-color: rgba(255,255,0,0.2); color: #ffa200; border: 1px solid currentcolor;">
-  &#x26a0; This package currently only contains the logic for a date picker and does not claim to be a fully functional UI component at this time!
-</div>
+> &#x26a0; This package currently only contains the logic for a date picker and does not claim to be a fully functional UI component at this time!
+
 
 Callie is a lightweight modular datepicker splitted into three main components:
 * Date logik (model)
 * Transformation and mapping to prepare for view
 * Render logik (view) Each of these components can be replaced by other solutions independently.
+
+![callie](https://cloud.githubusercontent.com/assets/1252204/23463417/af02a710-fe91-11e6-98c3-74bfadbae45b.gif)
 
 ## JS options
 | Name                   | Description                                                                           | Default                   |
