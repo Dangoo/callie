@@ -185,7 +185,10 @@ export function getMonthsInYear(months, selectedDate, minDate, maxDate) {
       monthName: item,
       selected: index === selectedDate.getMonth(),
       current: index === new Date().getMonth(),
-      disabled: !dateInRange(new Date(selectedDate.getFullYear(), index), minDate, maxDate)
+      disabled: !dateInRange(
+        new Date(selectedDate.getFullYear(), index),
+        new Date(minDate.getFullYear(), minDate.getMonth()),
+        maxDate)
     };
   });
 }
