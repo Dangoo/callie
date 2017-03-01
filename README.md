@@ -22,7 +22,7 @@ Callie is a lightweight modular datepicker splitted into three main components:
 | selectedStateClassName | (string) ClassName to be used on selected date elements                               | `'selected'`              |
 | currentStateClassName  | (string) ClassName to be used on current date elements                                | `'current'`               |
 | disabledStateClassName | (string) ClassName to be used on disabled date elements                               | `'disabled'`              |
-| format                 | (string) Date format to parse                                                         | `'dd.mm.yyyy'`            |
+| format                 | (string) Date format template for parsing and formating fallback                      | `'dd.mm.yyyy'`            |
 | noTouch                | (boolean) Set if picker should be used even on touch devices                          | `false`                   |
 | isOpen                 | (boolean) Picker initially opened                                                     | `false`                   |
 | dateNamesFallback      | (object) Fallback for date names for browsers not supporting Internatinalization API  | English names             |
@@ -36,7 +36,7 @@ Callie is a lightweight modular datepicker splitted into three main components:
 ## Browser support
 * Chrome
 * Safari 9+
-  * For Safari 9 see `dateNamesFallback` in [JS options](#js-options)
+  * For Safari 9 see `dateNamesFallback` and `format` in [JS options](#js-options)
 * Firefox
 * Internet Explorer 11+
 

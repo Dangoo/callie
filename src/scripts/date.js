@@ -1,8 +1,8 @@
 /**
  * Validate a given date
  *
- * @param   date Date Date to be validated
- * @returns      Date
+ * @param   {Date} date Date to be validated
+ * @return  {Date}
  */
 function validateDate(date) {
   // Simple test if date is valid
@@ -16,10 +16,10 @@ function validateDate(date) {
 /**
  * Parses a date according to a given scheme
  *
- * @param   dateString String Datestring to be parseDate
- * @param   format     String Date format string e.g. 'dd.mm.yyyy'
+ * @param  {String} dateString Datestring to be parseDate
+ * @param  {String} format     Date format string e.g. 'dd.mm.yyyy'
  *
- * @returns            Date
+ * @return {Date}
  */
 export function parseDate(dateString, format) {
   let parts = [];
@@ -47,26 +47,52 @@ export function parseDate(dateString, format) {
 /**
  * Format date according to given locale, fallback ISO timestring
  *
- * @param   date   Date   Date to be formatted
- * @param   locale String Locale to convert date according to
+ * @param   {Date}   date             Date to be formatted
+ * @param   {String} locale           Locale to convert date according to
+ * @param   {String} fallbackTemplate Template using placeholder (dd | mm | yyyy) and separators (. | / | -)
  *
- * @returns        Date
+ * @return  {Date}
  */
-export function formatDate(date, locale = navigator.language) {
-  return date.toLocaleString(locale, {
-    year: 'numeric',
-    month: '2-digit',
-    day: '2-digit'
-  })
+export function formatDate(date, locale = navigator.language, fallbackTemplate) {
+  if (typeof Intl !== 'undefined') {
+    return date
+      .toLocaleString(locale, {
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit'
+      })
+      .replace(/[\u200E]/g, ''); // Due to IE11 LTR marks included
+  }
+
+  // Fallback for iOS 9
+  if (fallbackTemplate) {
+    function fillAndReplace(datePartial, match) {
+      return ('0000' + datePartial).slice(-match.length);
+    }
+
+    return fallbackTemplate
+      // Replace <'d' | 'dd'>
+      .replace(/(d{1,2})/, (match) =>
+        fillAndReplace(date.getDate(), match)
+      )
+      // Replace <'m' | 'mm'>
+      .replace(/(m{1,2})/, (match) =>
+        fillAndReplace(date.getMonth() + 1, match)
+      )
+      // Replace <'y' | 'yy' | 'yyy' | 'yyyy'>
+      .replace(/(y{1,4})/, (match) =>
+        fillAndReplace(date.getFullYear(), match)
+      );
+  }
 }
 
 /**
  * Compare two dates
  *
- * @param   date1 Date    First date to compare to second one
- * @param   date2 Date    Second date to compare to first one
+ * @param  {Date} date1 First date to compare to second one
+ * @param  {Date} date2 Second date to compare to first one
  *
- * @returns       Boolean Date is equal or not
+ * @return {Boolean}    Date is equal or not
  */
 function compareDates(date1, date2) {
   return (
@@ -79,11 +105,11 @@ function compareDates(date1, date2) {
 /**
  * Compare two dates
  *
- * @param   date    Date    First date to compare
- * @param   minDate Date    Minimal date
- * @param   maxDate Date    Maximum date
+ * @param  {Date}    date    First date to compare
+ * @param  {Date}    minDate Minimal date
+ * @param  {Date}    maxDate Maximum date
  *
- * @returns         Boolean Date is in Range
+ * @return {Boolean}         Date is in Range
  */
 export function dateInRange(date, minDate, maxDate) {
   const dateMs = date.getTime();
@@ -97,8 +123,8 @@ export function dateInRange(date, minDate, maxDate) {
 /**
  * getDaysPerMonth
  *
- * @param   date Date   Date of wich month to calculate amount of days of
- * @returns      Number Amount of days of passed month
+ * @param   {Date}   date Date of wich month to calculate amount of days of
+ * @return  {Number}      Amount of days of passed month
  */
 export function getDaysPerMonth(date) {
   const tempDate = new Date(date);
@@ -114,12 +140,12 @@ export function getDaysPerMonth(date) {
 /**
  * getDatesInMonth
  *
- * @param   date        Date   Date of wich month to calculate days of
- * @param   selectedDay Number Integer of selected day
- * @param   minDate     Date   Minimal allowed date
- * @param   maxDate     Date   Maximal allowed date
+ * @param  {Date}   date        Date of wich month to calculate days of
+ * @param  {Number} selectedDay Integer of selected day
+ * @param  {Date}   minDate     Minimal allowed date
+ * @param  {Date}   maxDate     Maximal allowed date
  *
- * @returns             Object List of dates in current month
+ * @return {Object}             List of dates in current month
  */
 export function getDatesInMonth(date, selectedDay, minDate, maxDate) {
   let tempDate = new Date(date);
@@ -145,12 +171,12 @@ export function getDatesInMonth(date, selectedDay, minDate, maxDate) {
 /**
  * getMonthsInYear
  *
- * @param   months        Array  List of months
- * @param   selectedMonth Number Integer of selected month
- * @param   minDate       Date   Minimal allowed date
- * @param   maxDate       Date   Maximal allowed date
+ * @param  {Array}  months        List of months
+ * @param  {Number} selectedMonth Integer of selected month
+ * @param  {Date}   minDate       Minimal allowed date
+ * @param  {Date}   maxDate       Maximal allowed date
  *
- * @returns               Object List of months in year
+ * @return {Object}               List of months in year
  */
 export function getMonthsInYear(months, selectedDate, minDate, maxDate) {
   return months.map((item, index) => {
@@ -167,11 +193,11 @@ export function getMonthsInYear(months, selectedDate, minDate, maxDate) {
 /**
  * getYears
  *
- * @param   yearFrom      Number Year to count from
- * @param   yearTo        Number Year to count to
- * @param   selectedYear  Number Integer of selected year
+ * @param  {Number} yearFrom     Year to count from
+ * @param  {Number} yearTo       Year to count to
+ * @param  {Number} selectedYear Integer of selected year
  *
- * @returns               Object List of months in year
+ * @return {Object}              List of months in year
  */
 export function getYears(yearFrom, yearTo, selectedYear) {
   const delta = Math.abs(yearTo - yearFrom);

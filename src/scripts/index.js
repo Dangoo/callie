@@ -101,7 +101,7 @@ export default function callie(element, options) {
     if (_inputNode.type === 'date') {
       _inputNode.value = date.toISOString().slice(0, 10);
     } else if (_inputNode.type === 'text') {
-      _inputNode.value = lib.formatDate(date);
+      _inputNode.value = lib.formatDate(date, undefined, _opts.format);
     }
   }
 
