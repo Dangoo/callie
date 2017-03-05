@@ -1,5 +1,7 @@
 # &#x1f4c5; Callie
 
+[![Greenkeeper badge](https://badges.greenkeeper.io/sinnerschrader/callie.svg)](https://greenkeeper.io/)
+
 > &#x26a0; This package currently only contains the logic for a date picker and does not claim to be a fully functional UI component at this time!
 
 
