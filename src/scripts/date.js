@@ -55,13 +55,18 @@ export function parseDate(dateString, format) {
  */
 export function formatDate(date, locale = navigator.language, fallbackTemplate) {
   if (typeof Intl !== 'undefined') {
-    return date
-      .toLocaleString(locale, {
-        year: 'numeric',
-        month: '2-digit',
-        day: '2-digit'
-      })
-      .replace(/[\u200E]/g, ''); // Due to IE11 LTR marks included
+    const dateString = date.toLocaleString(locale, {
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit'
+    });
+
+    // Due to IE11 LTR marks included
+    if (dateString.indexOf('\u200E') !== -1) {
+      return dateString.replace(/[\u200E]/g, '');
+    }
+
+    return dateString;
   }
 
   // Fallback for iOS 9
