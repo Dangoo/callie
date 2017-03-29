@@ -1,10 +1,10 @@
 /**
  * Creates a new array with indexes as items and shifts them by given amount
  *
- * @param   length  Number Length of array to be created
- * @param   shiftBy Number Amount of by how many items the array should be
- *                  shifted
- * @returns         Array  Shifted array
+ * @param  {Number} length  Length of array to be created
+ * @param  {Number} shiftBy Amount of by how many items the array should be
+ *                          shifted
+ * @return {Array}          Shifted array
  */
 export function getShiftedArray(length, shiftBy) {
   // Create new array and use keys as items
@@ -18,14 +18,14 @@ export function getShiftedArray(length, shiftBy) {
 /**
  * Creates array with n entries and value as passed
  *
- * @param   n     Number Number of items in array
- * @param   value any    Value of each item
- * @returns       Array
+ * @param  {Number} n     Number of items in array
+ * @param  {*}      value Value of each item
+ * @return {Array}
  */
 export function getDummyArray(n, value) {
   const a = [];
 
-  for (var i = n; i > 0; i--) {
+  for (var i = 0; i < n; i++) {
     a.push(typeof value !== 'undefined' ? value : i);
   }
 
