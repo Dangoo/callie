@@ -25,7 +25,7 @@ export default function callie(element, options) {
     selectedStateClassName: 'date-input__item--selected',
     currentStateClassName: 'date-input__item--current',
     disabledStateClassName: 'date-input__item--disabled',
-    format: 'dd.mm.yyyy',
+    format: 'DD.MM.YYYY',
     noTouch: false,
     isOpen: false,
     dateNamesFallback: {
@@ -216,78 +216,91 @@ export default function callie(element, options) {
     _containerStateNode.checked = checked || !_containerStateNode.checked;
   }
 
-  function init() {
+  function initPicker() {
+    const dateNow = new Date();
+
+    _inputNode = element.querySelector(_opts.inputTargetSelector);
+    _containerStateNode = element.querySelector(_opts.containerStateSelector);
+    _containerNode = element.querySelector(_opts.containerSelector);
+    _daysViewNode = _containerNode.querySelector(_opts.daysTargetSelector);
+    _monthsViewNode = _containerNode.querySelector(_opts.monthsTargetSelector);
+    _yearsViewNode = _containerNode.querySelector(_opts.yearsTargetSelector);
+
+    _localOpts.value = _inputNode.value;
+    _localOpts.maxDate = _inputNode.max ? new Date(_inputNode.max) : dateNow;
+    _localOpts.minDate = _inputNode.min ? new Date(_inputNode.min) : new Date(0);
+    _localOpts.inputType = _inputNode.type;
+    _localOpts.useWeeks = true;
+    _localOpts.noTouch = _opts.noTouch || !lib.isTouch();
+    _localOpts.isOpen = _opts.isOpen;
+    _localOpts.localClick = false;
+    _localOpts.selectedDate = undefined;
+    _localOpts.selection = {
+      day: undefined,
+      month: undefined,
+      year: undefined
+    };
+
+    let dateValue = undefined;
+
+    if (_localOpts.value && _localOpts.inputType === 'date') {
+      _localOpts.selectedDate = new Date(_inputNode.value);
+    } else if (_localOpts.value && _localOpts.inputType === 'text') {
+      _localOpts.selectedDate = lib.parseDate(_inputNode.value, _opts.format);
+    }
+
+    if (_localOpts.selectedDate) {
+      _localOpts.selection = {
+        day: _localOpts.selectedDate.getDate(),
+        month: _localOpts.selectedDate.getMonth(),
+        year: _localOpts.selectedDate.getFullYear()
+      };
+    }
+
+    _stateClassNames = {
+      current: _opts.currentStateClassName,
+      selected: _opts.selectedStateClassName,
+      disabled: _opts.disabledStateClassName
+    };
+
+    element.addEventListener('input', handleChange);
+    _containerNode.addEventListener('click', handleSelect);
+    _containerNode.addEventListener('mousedown', handleLocalClick);
+    _containerNode.addEventListener('mouseup', handleLocalClick);
+
+    toggleType();
+
+    _dateNames = lib.getDateNames(undefined, _opts.dateNamesFallback);
+    _dayNamesAST = _dateNames.days.map((item) => lib.convertToAST(item));
+
+    if (_localOpts.selectedDate) {
+      updatePicker(_localOpts.selectedDate);
+    }
+
+    _inputNode.addEventListener('focus', handlePickerToggle);
+    _inputNode.addEventListener('blur', handlePickerToggle);
+  }
+
+  /**
+   * Main initialization
+   */
+  function main() {
+    // Transform to upperCase due to API change
+    if(options.format) {
+      options.format = options.format.toUpperCase();
+    }
+
     _opts = Object.assign(
       defaultOpts,
       options
     );
 
-    _localOpts.noTouch = _opts.noTouch || !lib.isTouch();
 
-    const dateNow = new Date();
+    _localOpts.noTouch = _opts.noTouch || !lib.isTouch();
 
     // Use datepicker only on non-touchscreens
     if (_localOpts.noTouch) {
-      _inputNode = element.querySelector(_opts.inputTargetSelector);
-      _containerStateNode = element.querySelector(_opts.containerStateSelector);
-      _containerNode = element.querySelector(_opts.containerSelector);
-      _daysViewNode = _containerNode.querySelector(_opts.daysTargetSelector);
-      _monthsViewNode = _containerNode.querySelector(_opts.monthsTargetSelector);
-      _yearsViewNode = _containerNode.querySelector(_opts.yearsTargetSelector);
-
-      _localOpts.value = _inputNode.value;
-      _localOpts.maxDate = _inputNode.max ? new Date(_inputNode.max) : dateNow;
-      _localOpts.minDate = _inputNode.min ? new Date(_inputNode.min) : new Date(0);
-      _localOpts.inputType = _inputNode.type;
-      _localOpts.useWeeks = true;
-      _localOpts.noTouch = _opts.noTouch || !lib.isTouch();
-      _localOpts.isOpen = _opts.isOpen;
-      _localOpts.localClick = false;
-      _localOpts.selectedDate = undefined;
-      _localOpts.selection = {
-        day: undefined,
-        month: undefined,
-        year: undefined
-      };
-
-      let dateValue = undefined;
-
-      if (_localOpts.value && _localOpts.inputType === 'date') {
-        _localOpts.selectedDate = new Date(_inputNode.value);
-      } else if (_localOpts.value && _localOpts.inputType === 'text') {
-        _localOpts.selectedDate = lib.parseDate(_inputNode.value, _opts.format);
-      }
-
-      if (_localOpts.selectedDate) {
-        _localOpts.selection = {
-          day: _localOpts.selectedDate.getDate(),
-          month: _localOpts.selectedDate.getMonth(),
-          year: _localOpts.selectedDate.getFullYear()
-        };
-      }
-
-      _stateClassNames = {
-        current: _opts.currentStateClassName,
-        selected: _opts.selectedStateClassName,
-        disabled: _opts.disabledStateClassName
-      };
-
-      element.addEventListener('input', handleChange);
-      _containerNode.addEventListener('click', handleSelect);
-      _containerNode.addEventListener('mousedown', handleLocalClick);
-      _containerNode.addEventListener('mouseup', handleLocalClick);
-
-      toggleType();
-
-      _dateNames = lib.getDateNames(undefined, _opts.dateNamesFallback);
-      _dayNamesAST = _dateNames.days.map((item) => lib.convertToAST(item));
-
-      if (_localOpts.selectedDate) {
-        updatePicker(_localOpts.selectedDate);
-      }
-
-      _inputNode.addEventListener('focus', handlePickerToggle);
-      _inputNode.addEventListener('blur', handlePickerToggle);
+      initPicker();
     }
 
     // Expose API
@@ -297,5 +310,5 @@ export default function callie(element, options) {
     }
   }
 
-  return init();
+  return main();
 }

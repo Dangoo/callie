@@ -1,5 +1,7 @@
 const gulp = require('gulp');
 const babel = require('rollup-plugin-babel');
+const nodeResolve = require('rollup-plugin-node-resolve');
+const commonjs = require('rollup-plugin-commonjs');
 const rollup = require('rollup-stream');
 const source = require('vinyl-source-stream');
 const header = require('gulp-header');
@@ -19,39 +21,42 @@ const banner = `/**
 `;
 
 const distPath = './dist';
+const rollupDefaultConfig = {
+  format: 'umd',
+  moduleName: 'callie',
+  plugins: [babel(), nodeResolve(), commonjs()]
+};
 
 gulp.task('datepicker', () => {
-  return rollup({
-      entry: './src/scripts/index.js',
-      format: 'umd',
-      moduleName: 'callie',
-      plugins: [ babel() ],
-    })
+  return rollup(Object.assign(
+    {},
+    rollupDefaultConfig,
+    { entry: './src/scripts/index.js' }
+  ))
     .pipe(source('index.js'))
-    .pipe(header(banner, { pkg } ))
+    .pipe(header(banner, { pkg }))
     .pipe(gulp.dest(distPath));
 });
 
 gulp.task('library', () => {
-  return rollup({
-      entry: './src/scripts/library.js',
-      format: 'umd',
-      moduleName: 'callieLib',
-      plugins: [ babel() ],
-    })
+  return rollup(Object.assign(
+    {},
+    rollupDefaultConfig,
+    { entry: './src/scripts/library.js' }
+  ))
     .pipe(source('lib.js'))
-    .pipe(header(banner, { pkg } ))
+    .pipe(header(banner, { pkg }))
     .pipe(gulp.dest(distPath));
 });
 
 gulp.task('css', function () {
-    var processors = [
-        postcssImport(),
-        potscssCssNext()
-    ];
-    return gulp.src('./src/styles/index.css')
-        .pipe(postcss(processors))
-        .pipe(gulp.dest(distPath));
+  var processors = [
+    postcssImport(),
+    potscssCssNext()
+  ];
+  return gulp.src('./src/styles/index.css')
+    .pipe(postcss(processors))
+    .pipe(gulp.dest(distPath));
 });
 
 gulp.task('watch', () => {
