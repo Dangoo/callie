@@ -8,11 +8,11 @@ export default function callie(element, options) {
   let _monthsViewNode;
   let _yearsViewNode;
   let _opts;
-  let _localOpts;
   let _dateNames;
   let _dayNamesAST;
   let _stateClassNames;
 
+  const _localOpts = {};
   const defaultOpts = {
     weeksPerMonth: 6,
     daysPerWeek: 7,
@@ -204,6 +204,7 @@ export default function callie(element, options) {
       'text' : 'date';
 
     _inputNode.type = type;
+    _localOpts.inputType = type;
 
     updateInput(_localOpts.selectedDate);
   }
@@ -221,30 +222,50 @@ export default function callie(element, options) {
       options
     );
 
+    _localOpts.noTouch = _opts.noTouch || !lib.isTouch();
+
     const dateNow = new Date();
-
-    _containerStateNode = element.querySelector(_opts.containerStateSelector);
-    _containerNode = element.querySelector(_opts.containerSelector);
-    _inputNode = element.querySelector(_opts.inputTargetSelector);
-    _daysViewNode = _containerNode.querySelector(_opts.daysTargetSelector);
-    _monthsViewNode = _containerNode.querySelector(_opts.monthsTargetSelector);
-    _yearsViewNode = _containerNode.querySelector(_opts.yearsTargetSelector);
-
-    _localOpts = {
-      value: _inputNode.value,
-      maxDate: _inputNode.max ? new Date(_inputNode.max) : dateNow,
-      minDate: _inputNode.min ? new Date(_inputNode.min) : new Date(0),
-      selectedDate: _inputNode.value ?
-        lib.parseDate(_inputNode.value, _opts.format) :
-        undefined,
-      useWeeks: true,
-      noTouch: _opts.noTouch || !lib.isTouch(),
-      isOpen: _opts.isOpen,
-      localClick: false
-    };
 
     // Use datepicker only on non-touchscreens
     if (_localOpts.noTouch) {
+      _inputNode = element.querySelector(_opts.inputTargetSelector);
+      _containerStateNode = element.querySelector(_opts.containerStateSelector);
+      _containerNode = element.querySelector(_opts.containerSelector);
+      _daysViewNode = _containerNode.querySelector(_opts.daysTargetSelector);
+      _monthsViewNode = _containerNode.querySelector(_opts.monthsTargetSelector);
+      _yearsViewNode = _containerNode.querySelector(_opts.yearsTargetSelector);
+
+      _localOpts.value = _inputNode.value;
+      _localOpts.maxDate = _inputNode.max ? new Date(_inputNode.max) : dateNow;
+      _localOpts.minDate = _inputNode.min ? new Date(_inputNode.min) : new Date(0);
+      _localOpts.inputType = _inputNode.type;
+      _localOpts.useWeeks = true;
+      _localOpts.noTouch = _opts.noTouch || !lib.isTouch();
+      _localOpts.isOpen = _opts.isOpen;
+      _localOpts.localClick = false;
+      _localOpts.selectedDate = undefined;
+      _localOpts.selection = {
+        day: undefined,
+        month: undefined,
+        year: undefined
+      };
+
+      let dateValue = undefined;
+
+      if (_localOpts.value && _localOpts.inputType === 'date') {
+        _localOpts.selectedDate = new Date(_inputNode.value);
+      } else if (_localOpts.value && _localOpts.inputType === 'text') {
+        _localOpts.selectedDate = lib.parseDate(_inputNode.value, _opts.format);
+      }
+
+      if (_localOpts.selectedDate) {
+        _localOpts.selection = {
+          day: _localOpts.selectedDate.getDate(),
+          month: _localOpts.selectedDate.getMonth(),
+          year: _localOpts.selectedDate.getFullYear()
+        };
+      }
+
       _stateClassNames = {
         current: _opts.currentStateClassName,
         selected: _opts.selectedStateClassName,
