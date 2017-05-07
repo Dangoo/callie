@@ -1,10 +1,17 @@
 {
-  "presets": [
-    [
+  "env": {
+    "test": {
+      "presets": [
+        [
+          "es2015"
+        ]
+      ]
+    },
+    "production": [
       "es2015",
       {
         "modules": false
       }
     ]
-  ]
+  }
 }

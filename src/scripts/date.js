@@ -25,15 +25,23 @@ export function parseDate(dateString, format) {
   let parts = [];
 
   switch (format) {
+    // 'de'
     case 'DD.MM.YYYY':
       parts = dateString.split('.').reverse();
       break;
-    case 'DD/MM/YYYY':
-      parts = dateString.split('/').reverse();
-      break;
+      // ''
     case 'MM.DD.YYYY':
       parts = dateString.split('.');
       parts.unshift(parts.pop());
+      break;
+    // 'en'
+    case 'MM/DD/YYYY':
+      parts = dateString.split('/');
+      parts.unshift(parts.pop());
+      break;
+    // 'en-GB'
+    case 'DD/MM/YYYY':
+      parts = dateString.split('/').reverse();
       break;
     default:
       parts = dateString.split('-')
@@ -57,15 +65,15 @@ function formatDateFallback(date, template) {
   }
 
   return template
-    // Replace <'d' | 'dd'>
+    // Replace <'D' | 'DD'>
     .replace(/(D{1,2})/, (match) =>
       fillAndReplace(date.getDate(), match)
     )
-    // Replace <'m' | 'mm'>
+    // Replace <'M' | 'MM'>
     .replace(/(M{1,2})/, (match) =>
       fillAndReplace(date.getMonth() + 1, match)
     )
-    // Replace <'y' | 'yy' | 'yyy' | 'yyyy'>
+    // Replace <'Y' | 'YY' | 'YYY' | 'YYYY'>
     .replace(/(Y{1,4})/, (match) =>
       fillAndReplace(date.getFullYear(), match)
     );
@@ -129,10 +137,6 @@ export function formatDate(date, locale = navigator.language, fallbackTemplate) 
     const dateMs = date.getTime();
     return dateMs >= minDate.getTime() && dateMs <= maxDate.getTime();
   }
-
-  /**
-   * Converts time interval from ms to years, months and days
-   */
 
   /**
    * getDaysPerMonth
