@@ -7,12 +7,12 @@
  * @return {Array}          Shifted array
  */
 export function getShiftedArray(length, shiftBy) {
-  // Create new array and use keys as items
-  // const items = [...Array(length).keys()]; // Temporarely disabled due to IE11 not supporting
-  const items = getDummyArray(length);
+	// Create new array and use keys as items
+	// const items = [...Array(length).keys()]; // Temporarely disabled due to IE11 not supporting
+	const items = getDummyArray(length);
 
-  // Remove n last items and insert at the beginning
-  return items.splice(-shiftBy).concat(items);
+	// Remove n last items and insert at the beginning
+	return items.splice(-shiftBy).concat(items);
 }
 
 /**
@@ -23,14 +23,14 @@ export function getShiftedArray(length, shiftBy) {
  * @return {Array}
  */
 export function getDummyArray(n, value) {
-  const a = [];
+	const a = [];
 
-  for (var i = 0; i < n; i++) {
-    a.push(typeof value !== 'undefined' ? value : i);
-  }
+	for (let i = 0; i < n; i++) {
+		a.push(typeof value === 'undefined' ? i : value);
+	}
 
-  return a;
+	return a;
 
-  // Modern implementation if array.prototype.fill is available
-  // return Array(n).fill(value);
+	// Modern implementation if array.prototype.fill is available
+	// return Array(n).fill(value);
 }
