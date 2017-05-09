@@ -1,0 +1,10 @@
+{
+  "extends": "xo/esnext",
+  "env": {
+    "browser": true,
+    "jest/globals": true
+  },
+  "plugins": [
+    "jest"
+  ]
+}

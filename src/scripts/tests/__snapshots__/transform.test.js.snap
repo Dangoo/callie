@@ -1,0 +1,490 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Return month splitted in weeks 1`] = `
+Array [
+  Array [
+    null,
+    null,
+    Object {
+      "children": 1,
+      "className": Array [],
+      "data": Object {
+        "type": "date",
+        "value": 1,
+      },
+    },
+    Object {
+      "children": 2,
+      "className": Array [],
+      "data": Object {
+        "type": "date",
+        "value": 2,
+      },
+    },
+    Object {
+      "children": 3,
+      "className": Array [],
+      "data": Object {
+        "type": "date",
+        "value": 3,
+      },
+    },
+    Object {
+      "children": 4,
+      "className": Array [],
+      "data": Object {
+        "type": "date",
+        "value": 4,
+      },
+    },
+    Object {
+      "children": 5,
+      "className": Array [],
+      "data": Object {
+        "type": "date",
+        "value": 5,
+      },
+    },
+  ],
+  Array [
+    Object {
+      "children": 6,
+      "className": Array [],
+      "data": Object {
+        "type": "date",
+        "value": 6,
+      },
+    },
+    Object {
+      "children": 7,
+      "className": Array [],
+      "data": Object {
+        "type": "date",
+        "value": 7,
+      },
+    },
+    Object {
+      "children": 8,
+      "className": Array [],
+      "data": Object {
+        "type": "date",
+        "value": 8,
+      },
+    },
+    Object {
+      "children": 9,
+      "className": Array [],
+      "data": Object {
+        "type": "date",
+        "value": 9,
+      },
+    },
+    Object {
+      "children": 10,
+      "className": Array [],
+      "data": Object {
+        "type": "date",
+        "value": 10,
+      },
+    },
+    Object {
+      "children": 11,
+      "className": Array [],
+      "data": Object {
+        "type": "date",
+        "value": 11,
+      },
+    },
+    Object {
+      "children": 12,
+      "className": Array [],
+      "data": Object {
+        "type": "date",
+        "value": 12,
+      },
+    },
+  ],
+  Array [
+    Object {
+      "children": 13,
+      "className": Array [],
+      "data": Object {
+        "type": "date",
+        "value": 13,
+      },
+    },
+    Object {
+      "children": 14,
+      "className": Array [],
+      "data": Object {
+        "type": "date",
+        "value": 14,
+      },
+    },
+    Object {
+      "children": 15,
+      "className": Array [],
+      "data": Object {
+        "type": "date",
+        "value": 15,
+      },
+    },
+    Object {
+      "children": 16,
+      "className": Array [],
+      "data": Object {
+        "type": "date",
+        "value": 16,
+      },
+    },
+    Object {
+      "children": 17,
+      "className": Array [],
+      "data": Object {
+        "type": "date",
+        "value": 17,
+      },
+    },
+    Object {
+      "children": 18,
+      "className": Array [],
+      "data": Object {
+        "type": "date",
+        "value": 18,
+      },
+    },
+    Object {
+      "children": 19,
+      "className": Array [],
+      "data": Object {
+        "type": "date",
+        "value": 19,
+      },
+    },
+  ],
+  Array [
+    Object {
+      "children": 20,
+      "className": Array [],
+      "data": Object {
+        "type": "date",
+        "value": 20,
+      },
+    },
+    Object {
+      "children": 21,
+      "className": Array [],
+      "data": Object {
+        "type": "date",
+        "value": 21,
+      },
+    },
+    Object {
+      "children": 22,
+      "className": Array [],
+      "data": Object {
+        "type": "date",
+        "value": 22,
+      },
+    },
+    Object {
+      "children": 23,
+      "className": Array [],
+      "data": Object {
+        "type": "date",
+        "value": 23,
+      },
+    },
+    Object {
+      "children": 24,
+      "className": Array [],
+      "data": Object {
+        "type": "date",
+        "value": 24,
+      },
+    },
+    Object {
+      "children": 25,
+      "className": Array [],
+      "data": Object {
+        "type": "date",
+        "value": 25,
+      },
+    },
+    Object {
+      "children": 26,
+      "className": Array [],
+      "data": Object {
+        "type": "date",
+        "value": 26,
+      },
+    },
+  ],
+  Array [
+    Object {
+      "children": 27,
+      "className": Array [],
+      "data": Object {
+        "type": "date",
+        "value": 27,
+      },
+    },
+    Object {
+      "children": 28,
+      "className": Array [],
+      "data": Object {
+        "type": "date",
+        "value": 28,
+      },
+    },
+    null,
+    null,
+    null,
+    null,
+    null,
+  ],
+  Array [],
+]
+`;
+
+exports[`Returns days with padding 1`] = `
+Object {
+  "daysInMonth": Array [
+    Object {
+      "current": false,
+      "date": 1,
+      "day": 3,
+      "disabled": false,
+      "fullDate": 2017-01-31T23:00:00.000Z,
+      "selected": false,
+    },
+    Object {
+      "current": false,
+      "date": 2,
+      "day": 4,
+      "disabled": false,
+      "fullDate": 2017-02-01T23:00:00.000Z,
+      "selected": false,
+    },
+    Object {
+      "current": false,
+      "date": 3,
+      "day": 5,
+      "disabled": false,
+      "fullDate": 2017-02-02T23:00:00.000Z,
+      "selected": false,
+    },
+    Object {
+      "current": false,
+      "date": 4,
+      "day": 6,
+      "disabled": false,
+      "fullDate": 2017-02-03T23:00:00.000Z,
+      "selected": false,
+    },
+    Object {
+      "current": false,
+      "date": 5,
+      "day": 0,
+      "disabled": false,
+      "fullDate": 2017-02-04T23:00:00.000Z,
+      "selected": false,
+    },
+    Object {
+      "current": false,
+      "date": 6,
+      "day": 1,
+      "disabled": false,
+      "fullDate": 2017-02-05T23:00:00.000Z,
+      "selected": false,
+    },
+    Object {
+      "current": false,
+      "date": 7,
+      "day": 2,
+      "disabled": false,
+      "fullDate": 2017-02-06T23:00:00.000Z,
+      "selected": false,
+    },
+    Object {
+      "current": false,
+      "date": 8,
+      "day": 3,
+      "disabled": false,
+      "fullDate": 2017-02-07T23:00:00.000Z,
+      "selected": false,
+    },
+    Object {
+      "current": false,
+      "date": 9,
+      "day": 4,
+      "disabled": false,
+      "fullDate": 2017-02-08T23:00:00.000Z,
+      "selected": false,
+    },
+    Object {
+      "current": false,
+      "date": 10,
+      "day": 5,
+      "disabled": false,
+      "fullDate": 2017-02-09T23:00:00.000Z,
+      "selected": false,
+    },
+    Object {
+      "current": false,
+      "date": 11,
+      "day": 6,
+      "disabled": false,
+      "fullDate": 2017-02-10T23:00:00.000Z,
+      "selected": false,
+    },
+    Object {
+      "current": false,
+      "date": 12,
+      "day": 0,
+      "disabled": false,
+      "fullDate": 2017-02-11T23:00:00.000Z,
+      "selected": false,
+    },
+    Object {
+      "current": false,
+      "date": 13,
+      "day": 1,
+      "disabled": false,
+      "fullDate": 2017-02-12T23:00:00.000Z,
+      "selected": false,
+    },
+    Object {
+      "current": false,
+      "date": 14,
+      "day": 2,
+      "disabled": false,
+      "fullDate": 2017-02-13T23:00:00.000Z,
+      "selected": false,
+    },
+    Object {
+      "current": false,
+      "date": 15,
+      "day": 3,
+      "disabled": false,
+      "fullDate": 2017-02-14T23:00:00.000Z,
+      "selected": false,
+    },
+    Object {
+      "current": false,
+      "date": 16,
+      "day": 4,
+      "disabled": false,
+      "fullDate": 2017-02-15T23:00:00.000Z,
+      "selected": false,
+    },
+    Object {
+      "current": false,
+      "date": 17,
+      "day": 5,
+      "disabled": false,
+      "fullDate": 2017-02-16T23:00:00.000Z,
+      "selected": false,
+    },
+    Object {
+      "current": false,
+      "date": 18,
+      "day": 6,
+      "disabled": false,
+      "fullDate": 2017-02-17T23:00:00.000Z,
+      "selected": false,
+    },
+    Object {
+      "current": false,
+      "date": 19,
+      "day": 0,
+      "disabled": false,
+      "fullDate": 2017-02-18T23:00:00.000Z,
+      "selected": false,
+    },
+    Object {
+      "current": false,
+      "date": 20,
+      "day": 1,
+      "disabled": false,
+      "fullDate": 2017-02-19T23:00:00.000Z,
+      "selected": false,
+    },
+    Object {
+      "current": false,
+      "date": 21,
+      "day": 2,
+      "disabled": false,
+      "fullDate": 2017-02-20T23:00:00.000Z,
+      "selected": false,
+    },
+    Object {
+      "current": false,
+      "date": 22,
+      "day": 3,
+      "disabled": false,
+      "fullDate": 2017-02-21T23:00:00.000Z,
+      "selected": false,
+    },
+    Object {
+      "current": false,
+      "date": 23,
+      "day": 4,
+      "disabled": false,
+      "fullDate": 2017-02-22T23:00:00.000Z,
+      "selected": false,
+    },
+    Object {
+      "current": false,
+      "date": 24,
+      "day": 5,
+      "disabled": false,
+      "fullDate": 2017-02-23T23:00:00.000Z,
+      "selected": false,
+    },
+    Object {
+      "current": false,
+      "date": 25,
+      "day": 6,
+      "disabled": false,
+      "fullDate": 2017-02-24T23:00:00.000Z,
+      "selected": false,
+    },
+    Object {
+      "current": false,
+      "date": 26,
+      "day": 0,
+      "disabled": false,
+      "fullDate": 2017-02-25T23:00:00.000Z,
+      "selected": false,
+    },
+    Object {
+      "current": false,
+      "date": 27,
+      "day": 1,
+      "disabled": false,
+      "fullDate": 2017-02-26T23:00:00.000Z,
+      "selected": false,
+    },
+    Object {
+      "current": false,
+      "date": 28,
+      "day": 2,
+      "disabled": false,
+      "fullDate": 2017-02-27T23:00:00.000Z,
+      "selected": false,
+    },
+  ],
+  "daysInNextMonth": Array [
+    null,
+    null,
+    null,
+    null,
+    null,
+  ],
+  "daysInPreviousMonth": Array [
+    null,
+    null,
+  ],
+}
+`;
