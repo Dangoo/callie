@@ -3,8 +3,8 @@ const rollup = require('rollup');
 const rollupTypescript = require('@rollup/plugin-typescript');
 
 const postcss = require('gulp-postcss');
-const postcssImport = require("postcss-import");
-const potscssCssNext = require("postcss-cssnext");
+const postcssAtImport = require('postcss-import');
+const postcssPresetEnv = require('postcss-preset-env');
 
 const distPath = './dist';
 
@@ -38,8 +38,8 @@ gulp.task('library', () => {
 
 gulp.task('css', function () {
   var processors = [
-    postcssImport(),
-    potscssCssNext()
+    postcssAtImport(),
+    postcssPresetEnv()
   ];
   return gulp.src('./src/styles/index.css')
     .pipe(postcss(processors))
