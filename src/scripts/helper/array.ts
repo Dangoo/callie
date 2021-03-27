@@ -6,7 +6,7 @@
  *                          shifted
  * @return {Array}          Shifted array
  */
-export function getShiftedArray(length, shiftBy) {
+export function getShiftedArray(length: number, shiftBy: number): number[] {
   // Create new array and use keys as items
   // const items = [...Array(length).keys()]; // Temporarely disabled due to IE11 not supporting
   const items = getDummyArray(length);
@@ -22,7 +22,9 @@ export function getShiftedArray(length, shiftBy) {
  * @param  {*}      value Value of each item
  * @return {Array}
  */
-export function getDummyArray(n, value) {
+export function getDummyArray(n: number): number[];
+export function getDummyArray<T>(n: number, value?: T): T[];
+export function getDummyArray(n: number, value?: any){
   const a = [];
 
   for (var i = 0; i < n; i++) {

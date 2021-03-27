@@ -10,7 +10,7 @@ const distPath = './dist';
 
 gulp.task('datepicker', () => {
   return rollup.rollup({
-    input: './src/scripts/index.js',
+    input: './src/scripts/index.ts',
     plugins: [rollupTypescript()],
   }).then(bundle => {
     return bundle.write({
@@ -24,7 +24,7 @@ gulp.task('datepicker', () => {
 
 gulp.task('library', () => {
   return rollup.rollup({
-    input: './src/scripts/library.js',
+    input: './src/scripts/library.ts',
     plugins: [rollupTypescript()],
   }).then(bundle => {
     return bundle.write({
@@ -47,7 +47,7 @@ gulp.task('css', function () {
 });
 
 gulp.task('watch', () => {
-  gulp.watch('./src/scripts/**/*.js', gulp.parallel('datepicker', 'library'));
+  gulp.watch('./src/scripts/**/*.ts', gulp.parallel('datepicker', 'library'));
   gulp.watch('./src/styles/**/*.css', gulp.parallel('css'));
 });
 
