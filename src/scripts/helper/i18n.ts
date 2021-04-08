@@ -6,9 +6,12 @@
  *
  * @returns         Object Object with names
  */
-export function getDateNames(locale = navigator.language, fallback) {
+export function getDateNames(
+  locale: string = navigator.language,
+  fallback: { days: string[]; months: string[] }
+) {
   // Test if ES Internationalization API is available
-  if (typeof Intl !== 'object') {
+  if (typeof Intl !== "object") {
     return fallback;
   }
 
@@ -20,21 +23,17 @@ export function getDateNames(locale = navigator.language, fallback) {
   for (let i = 11; i >= 0; i--) {
     date.setMonth(i);
 
-    monthNames.push(
-      date.toLocaleString(locale, { month: 'long' })
-    );
+    monthNames.push(date.toLocaleString(locale, { month: "long" }));
   }
 
   for (let i = 6; i >= 0; i--) {
     // Date to Mon Jan 05 1970 01:00:00 GMT+0100 (CET) to get first day of week
     date.setDate(5 + i);
-    dayNames.push(
-      date.toLocaleString(locale, { weekday: 'short' })
-    );
+    dayNames.push(date.toLocaleString(locale, { weekday: "short" }));
   }
 
   return {
     days: dayNames.reverse(),
-    months: monthNames.reverse()
+    months: monthNames.reverse(),
   };
 }

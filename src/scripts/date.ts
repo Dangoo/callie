@@ -1,15 +1,17 @@
+import type { DateItem, MonthItem, YearItem } from "./types";
+
 /**
  * Validate a given date
  *
  * @param   {Date} date Date to be validated
  * @return  {Date}
  */
-function validateDate(date) {
+function validateDate(date: any): Date | null {
   // Simple test if date is valid
-  if (date != 'Invalid Date') {
-    return date;
-  } else {
+  if (Number.isNaN(Date.parse(date))) {
     return null;
+  } else {
+    return date;
   }
 }
 
@@ -21,27 +23,25 @@ function validateDate(date) {
  *
  * @return {Date}
  */
-export function parseDate(dateString, format) {
-  let parts = [];
+export function parseDate(dateString: string, format: string): Date | null {
+  let parts: string[] = [];
   switch (format) {
-    case 'dd.mm.yyyy':
-      parts = dateString.split('.').reverse();
+    case "dd.mm.yyyy":
+      parts = dateString.split(".").reverse();
       break;
-    case 'dd/mm/yyyy':
-      parts = dateString.split('/').reverse();
+    case "dd/mm/yyyy":
+      parts = dateString.split("/").reverse();
       break;
-    case 'mm.dd.yyyy':
-      parts = dateString.split('.');
-      parts.unshift(parts.pop());
+    case "mm.dd.yyyy":
+      parts = dateString.split(".");
+      parts.unshift(parts.pop()!);
       break;
     default:
-      parts = dateString.split('-')
+      parts = dateString.split("-");
       break;
   }
 
-  return validateDate(
-    new Date(parts.join('-'))
-  );
+  return validateDate(new Date(parts.join("-")));
 }
 
 /**
@@ -51,19 +51,23 @@ export function parseDate(dateString, format) {
  * @param   {String} locale           Locale to convert date according to
  * @param   {String} fallbackTemplate Template using placeholder (dd | mm | yyyy) and separators (. | / | -)
  *
- * @return  {Date}
+ * @return  {String}
  */
-export function formatDate(date, locale = navigator.language, fallbackTemplate) {
-  if (typeof Intl !== 'undefined') {
+export function formatDate(
+  date: Date,
+  locale: string = navigator.language,
+  fallbackTemplate: string
+): string {
+  if (typeof Intl !== undefined) {
     const dateString = date.toLocaleString(locale, {
-      year: 'numeric',
-      month: '2-digit',
-      day: '2-digit'
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit",
     });
 
     // Due to IE11 LTR marks included
-    if (dateString.indexOf('\u200E') !== -1) {
-      return dateString.replace(/[\u200E]/g, '');
+    if (dateString.indexOf("\u200E") !== -1) {
+      return dateString.replace(/[\u200E]/g, "");
     }
 
     return dateString;
@@ -71,24 +75,26 @@ export function formatDate(date, locale = navigator.language, fallbackTemplate) 
 
   // Fallback for iOS 9
   if (fallbackTemplate) {
-    function fillAndReplace(datePartial, match) {
-      return ('0000' + datePartial).slice(-match.length);
+    function fillAndReplace(datePartial: number, match: string) {
+      return ("0000" + datePartial).slice(-match.length);
     }
 
-    return fallbackTemplate
-      // Replace <'d' | 'dd'>
-      .replace(/(d{1,2})/, (match) =>
-        fillAndReplace(date.getDate(), match)
-      )
-      // Replace <'m' | 'mm'>
-      .replace(/(m{1,2})/, (match) =>
-        fillAndReplace(date.getMonth() + 1, match)
-      )
-      // Replace <'y' | 'yy' | 'yyy' | 'yyyy'>
-      .replace(/(y{1,4})/, (match) =>
-        fillAndReplace(date.getFullYear(), match)
-      );
+    return (
+      fallbackTemplate
+        // Replace <'d' | 'dd'>
+        .replace(/(d{1,2})/, (match) => fillAndReplace(date.getDate(), match))
+        // Replace <'m' | 'mm'>
+        .replace(/(m{1,2})/, (match) =>
+          fillAndReplace(date.getMonth() + 1, match)
+        )
+        // Replace <'y' | 'yy' | 'yyy' | 'yyyy'>
+        .replace(/(y{1,4})/, (match) =>
+          fillAndReplace(date.getFullYear(), match)
+        )
+    );
   }
+
+  return date.toLocaleDateString();
 }
 
 /**
@@ -99,7 +105,7 @@ export function formatDate(date, locale = navigator.language, fallbackTemplate) 
  *
  * @return {Boolean}    Date is equal or not
  */
-function compareDates(date1, date2) {
+function compareDates(date1: Date, date2: Date): boolean {
   return (
     date1.getFullYear() === date2.getFullYear() &&
     date1.getMonth() === date2.getMonth() &&
@@ -116,7 +122,7 @@ function compareDates(date1, date2) {
  *
  * @return {Boolean}         Date is in Range
  */
-export function dateInRange(date, minDate, maxDate) {
+export function dateInRange(date: Date, minDate: Date, maxDate: Date): boolean {
   const dateMs = date.getTime();
   return dateMs >= minDate.getTime() && dateMs <= maxDate.getTime();
 }
@@ -131,7 +137,7 @@ export function dateInRange(date, minDate, maxDate) {
  * @param   {Date}   date Date of wich month to calculate amount of days of
  * @return  {Number}      Amount of days of passed month
  */
-export function getDaysPerMonth(date) {
+export function getDaysPerMonth(date: Date): number {
   const tempDate = new Date(date);
   // Increment month by 1 to switch to next month
   tempDate.setDate(1);
@@ -152,7 +158,12 @@ export function getDaysPerMonth(date) {
  *
  * @return {Object}             List of dates in current month
  */
-export function getDatesInMonth(date, selectedDay, minDate, maxDate) {
+export function getDatesInMonth(
+  date: Date,
+  selectedDay: number | undefined,
+  minDate: Date,
+  maxDate: Date
+): DateItem[] {
   let tempDate = new Date(date);
   const daysPerMonth = getDaysPerMonth(date);
   const datesInMonth = [];
@@ -166,7 +177,7 @@ export function getDatesInMonth(date, selectedDay, minDate, maxDate) {
       day: tempDate.getDay(),
       current: compareDates(actualDate, new Date()),
       selected: tempDate.getDate() === selectedDay,
-      disabled: !dateInRange(tempDate, minDate, maxDate)
+      disabled: !dateInRange(tempDate, minDate, maxDate),
     });
   }
 
@@ -176,24 +187,30 @@ export function getDatesInMonth(date, selectedDay, minDate, maxDate) {
 /**
  * getMonthsInYear
  *
- * @param  {Array}  months        List of months
- * @param  {Number} selectedMonth Integer of selected month
+ * @param  {string[]}  months     List of months
+ * @param  {Date} selectedDate    Selected date
  * @param  {Date}   minDate       Minimal allowed date
  * @param  {Date}   maxDate       Maximal allowed date
  *
- * @return {Object}               List of months in year
+ * @return {object}               List of months in year
  */
-export function getMonthsInYear(months, selectedDate, minDate, maxDate) {
+export function getMonthsInYear(
+  months: string[],
+  selectedDate: Date | null | undefined,
+  minDate: Date,
+  maxDate: Date
+): MonthItem[] {
   return months.map((item, index) => {
     return {
       month: index,
       monthName: item,
-      selected: index === selectedDate.getMonth(),
+      selected: index === selectedDate?.getMonth(),
       current: index === new Date().getMonth(),
-      disabled: !dateInRange(
+      disabled: selectedDate ? !dateInRange(
         new Date(selectedDate.getFullYear(), index),
         new Date(minDate.getFullYear(), minDate.getMonth()),
-        maxDate)
+        maxDate
+      ) : true,
     };
   });
 }
@@ -207,7 +224,11 @@ export function getMonthsInYear(months, selectedDate, minDate, maxDate) {
  *
  * @return {Object}              List of months in year
  */
-export function getYears(yearFrom, yearTo, selectedYear) {
+export function getYears(
+  yearFrom: number,
+  yearTo: number,
+  selectedYear?: number
+): YearItem[] {
   const delta = Math.abs(yearTo - yearFrom);
   const years = [];
 
@@ -216,7 +237,7 @@ export function getYears(yearFrom, yearTo, selectedYear) {
     years.push({
       year,
       selected: year === selectedYear,
-      current: year === new Date().getFullYear()
+      current: year === new Date().getFullYear(),
     });
   }
 

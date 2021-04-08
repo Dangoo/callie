@@ -3,10 +3,7 @@
 .date-input [data-role=state],
 .date-input [data-role=ui-state] {
   position: absolute;
-  width: 0;
-  height: 0;
-  left: 0;
-  top: 0;
+  inset: 0;
   visibility: hidden;
 }
 
@@ -14,10 +11,7 @@
   display: none;
   position: fixed;
   cursor: auto;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  top: 0;
+  inset: 0;
 }
 
 .date-input__container {
